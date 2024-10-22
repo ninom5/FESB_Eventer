@@ -1,5 +1,5 @@
 .register-page {
-  background-image: url("C:/Projekti/Test/frontend/src/assets/LoginBackground.png");
+  background-image: url("../assets/LoginBackground.png");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;

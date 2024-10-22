@@ -153,7 +153,7 @@ function RegisterPage() {
                 onChange={(e) =>
                   setRegisterValues({
                     ...registerValues,
-                    password2: e.target.value,
+                    confirmPassword: e.target.value,
                   })
                 }
                 type="password"

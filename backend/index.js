@@ -5,7 +5,6 @@ const app = express();
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
-
 const { Client } = require("pg");
 
 const client = new Client({
@@ -25,7 +24,7 @@ app.use(express.urlencoded({ extended: true }));
 
 const salt = 10;
 
-//register endpoint, check if email and username already exist
+//Register endpoint, check if email and username already exist
 app.post("/register", (req, res) => {
   const checkEmailQuery = `SELECT * FROM korisnici_role WHERE email = $1`;
   const checkUsernameQuery = `SELECT * FROM korisnici_role WHERE username = $1`;
@@ -77,6 +76,46 @@ app.post("/register", (req, res) => {
 
           res.send("Successfully registered");
         });
+      });
+    });
+  });
+});
+
+
+//Login endpoint, check if user exists and compare passwords
+app.post("/login", (req, res) => {
+  const checkUserQuery = "SELECT * FROM korisnici_role WHERE username = $1";
+
+  // Check if the user exists in the database
+  client.query(checkUserQuery, [req.body.username], (error, result) => {
+    if (error) {
+      return res.json("Error");
+    }
+
+    if (result.rows.length === 0) {
+      return res.json("Invalid username or password");
+    }
+
+    const user = result.rows[0];
+
+    // Compare password with hashed password in the database
+    bcrypt.compare(req.body.password, user.sifra.toString(), (err, isMatch) => {
+      if (err) {
+        return res.json("Error comparing passwords");
+      }
+
+      if (!isMatch) {
+        return res.json("Invalid username or password");
+      }
+
+      // Generate JWT token
+      const Accesstoken = jwt.sign(
+        { username: user.username },
+        process.env.ACCESS_TOKEN_SECRET
+      );
+
+      res.json({
+        accessToken: Accesstoken,
       });
     });
   });
