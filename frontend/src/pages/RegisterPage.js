@@ -30,17 +30,29 @@ function RegisterPage() {
         if (response.data === "Successfully registered") {
           navigate("/login");
         }
+
+        if (response.data === "Email already exists") {
+          alert("Email already exists");
+        }
+
+        if (response.data === "Username already exists") {
+          alert("Username already exists");
+        }
+
+        if (response.data === "Passwords do not match") {
+          alert("Passwords do not match");
+        }
       })
       .catch((error) => {
         console.error("Error registering:", error);
       });
   };
 
-  return (    
+  return (
     <div className="register-page">
       <div className="register-div">
         <h2>Register</h2>
-    
+
         <form onSubmit={handleSubmit} className="register-form">
           <div className="input-group">
             <div className="input-with-icon">
@@ -57,13 +69,16 @@ function RegisterPage() {
               />
             </div>
           </div>
-    
+
           <div className="input-group">
             <div className="input-with-icon">
               <FontAwesomeIcon icon={faUser} className="input-icon" />
               <input
                 onChange={(e) =>
-                  setRegisterValues({ ...registerValues, prezime: e.target.value })
+                  setRegisterValues({
+                    ...registerValues,
+                    prezime: e.target.value,
+                  })
                 }
                 type="text"
                 id="prezime"
@@ -73,13 +88,16 @@ function RegisterPage() {
               />
             </div>
           </div>
-    
+
           <div className="input-group">
             <div className="input-with-icon">
               <FontAwesomeIcon icon={faUser} className="input-icon" />
               <input
                 onChange={(e) =>
-                  setRegisterValues({ ...registerValues, username: e.target.value })
+                  setRegisterValues({
+                    ...registerValues,
+                    username: e.target.value,
+                  })
                 }
                 type="text"
                 id="username"
@@ -89,13 +107,16 @@ function RegisterPage() {
               />
             </div>
           </div>
-    
+
           <div className="input-group">
             <div className="input-with-icon">
               <FontAwesomeIcon icon={faEnvelope} className="input-icon" />
               <input
                 onChange={(e) =>
-                  setRegisterValues({ ...registerValues, email: e.target.value })
+                  setRegisterValues({
+                    ...registerValues,
+                    email: e.target.value,
+                  })
                 }
                 type="email"
                 id="email"
@@ -105,13 +126,16 @@ function RegisterPage() {
               />
             </div>
           </div>
-    
+
           <div className="input-group">
             <div className="input-with-icon">
               <FontAwesomeIcon icon={faLock} className="input-icon" />
               <input
                 onChange={(e) =>
-                  setRegisterValues({ ...registerValues, password: e.target.value })
+                  setRegisterValues({
+                    ...registerValues,
+                    password: e.target.value,
+                  })
                 }
                 type="password"
                 id="password"
@@ -121,7 +145,7 @@ function RegisterPage() {
               />
             </div>
           </div>
-    
+
           <div className="input-group">
             <div className="input-with-icon">
               <FontAwesomeIcon icon={faLock} className="input-icon" />
@@ -140,16 +164,17 @@ function RegisterPage() {
               />
             </div>
           </div>
-    
-          <button className="register-button" type="submit">Register</button>
+
+          <button className="register-button" type="submit">
+            Register
+          </button>
         </form>
-    
+
         <a className="login-link" href="/login">
           Already have an account? <strong>Login here</strong>
         </a>
       </div>
     </div>
-    
   );
 }
 
