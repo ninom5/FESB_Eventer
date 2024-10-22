@@ -96,7 +96,7 @@ app.post("/login", async (req, res) => {
 
     const user = result.rows[0];
 
-    const isPassword = await bcrypt.compare(password, user.password);
+    const isPassword = bcrypt.compare(req.body.password, user.password);
 
     if (!isPassword) {
       return res.send("Wrong email or password");
