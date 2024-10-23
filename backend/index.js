@@ -51,7 +51,10 @@ app.post("/register", (req, res) => {
       if (result.rows.length > 0) {
         return res.send("Username already exists");
       }
-
+      if (req.body.username.toString().includes('@')) {
+        return res.send("username contains @");
+      }
+      
       // Both email and username are available, register the user
       const sql =
         "INSERT INTO korisnici_role (ime, prezime, username, email, sifra) VALUES ($1, $2, $3, $4, $5)";
@@ -84,16 +87,21 @@ app.post("/register", (req, res) => {
 
 //Login endpoint, check if user exists and compare passwords
 app.post("/login", (req, res) => {
-  const checkUserQuery = "SELECT * FROM korisnici_role WHERE username = $1";
+  const { input, password } = req.body;
 
+  //checking is email entered or username
+  const isEmail= input.includes('@');
+
+  const checkUserQuery = `SELECT * FROM korisnici_role WHERE ${isEmail ? 'email' : 'username'} = $1`;
+  
   // Check if the user exists in the database
-  client.query(checkUserQuery, [req.body.username], (error, result) => {
+  client.query(checkUserQuery, [input], (error, result) => {
     if (error) {
       return res.json("Error");
     }
 
     if (result.rows.length === 0) {
-      return res.json("Invalid username or password");
+      return res.json("Invalid usernameemail or password");
     }
 
     const user = result.rows[0];
