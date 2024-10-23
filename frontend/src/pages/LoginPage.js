@@ -8,7 +8,7 @@ function LoginPage() {
   const navigate = useNavigate();
 
   const [loginValues, setLoginValues] = useState({
-    username: "",
+    input: "",
     password: "",
   });
 
@@ -45,12 +45,12 @@ function LoginPage() {
               <FontAwesomeIcon icon={faUser} className="input-icon" />
               <input
                 onChange={(e) =>
-                  setLoginValues({ ...loginValues, username: e.target.value })
+                  setLoginValues({ ...loginValues, input: e.target.value })
                 }
                 type="text"
-                id="username"
-                name="username"
-                placeholder="Enter your username"
+                id="input"
+                name="input"
+                placeholder="Enter your username or email"
                 required
               />
             </div>
