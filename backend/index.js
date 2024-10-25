@@ -51,10 +51,10 @@ app.post("/register", (req, res) => {
       if (result.rows.length > 0) {
         return res.send("Username already exists");
       }
-      if (req.body.username.toString().includes('@')) {
+      if (req.body.username.toString().includes("@")) {
         return res.send("username contains @");
       }
-      
+
       // Both email and username are available, register the user
       const sql =
         "INSERT INTO korisnici_role (ime, prezime, username, email, sifra) VALUES ($1, $2, $3, $4, $5)";
@@ -84,16 +84,17 @@ app.post("/register", (req, res) => {
   });
 });
 
-
 //Login endpoint, check if user exists and compare passwords
 app.post("/login", (req, res) => {
   const { input, password } = req.body;
 
   //checking is email entered or username
-  const isEmail= input.includes('@');
+  const isEmail = input.includes("@");
 
-  const checkUserQuery = `SELECT * FROM korisnici_role WHERE ${isEmail ? 'email' : 'username'} = $1`;
-  
+  const checkUserQuery = `SELECT * FROM korisnici_role WHERE ${
+    isEmail ? "email" : "username"
+  } = $1`;
+
   // Check if the user exists in the database
   client.query(checkUserQuery, [input], (error, result) => {
     if (error) {
@@ -128,6 +129,44 @@ app.post("/login", (req, res) => {
     });
   });
 });
+
+app.post("/delete", (req, res) => {
+  const email = req.body.email;
+  const password = req.body.password;
+
+  const checkUserQuery = "SELECT * FROM korisnici_role WHERE email = $1";
+  
+  client.query(checkUserQuery, [email], (error, result) => {
+    if (error) {
+      return res.json("Server error");
+    }
+
+    const user = result.rows[0];
+    if (!user) {
+      return res.json("Invalid username or password");
+    }
+
+    bcrypt.compare(password, user.sifra.toString(), (err, isMatch) => {
+      if (err) {
+        return res.json("Error comparing passwords");
+      }
+      if (!isMatch) {
+        return res.json("Invalid username or password");
+      }
+
+      const deleteQuery = "DELETE FROM korisnici_role WHERE email = $1";
+      
+      client.query(deleteQuery, [email], (deleteError) => {
+        if (deleteError) {
+          return res.json("Server error deleting account");
+        }
+        
+        return res.json("Account deleted successfully");
+      });
+    });
+  });
+});
+
 
 app.listen(5000, () => {
   console.log("Server is running on port 5000");
