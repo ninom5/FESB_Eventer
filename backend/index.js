@@ -130,41 +130,57 @@ app.post("/login", (req, res) => {
   });
 });
 
-app.post("/delete", (req, res) => {
+app.post("/delete", async (req, res) => { //radi, triba frontend napravit
   const email = req.body.email;
   const password = req.body.password;
 
   const checkUserQuery = "SELECT * FROM korisnici_role WHERE email = $1";
+  const getIdQuery = "SELECT korisnik_id FROM korisnici_role WHERE email = $1";
   
-  client.query(checkUserQuery, [email], (error, result) => {
-    if (error) {
-      return res.json("Server error");
-    }
-
+  try{
+    const result = await client.query(checkUserQuery, [email])
     const user = result.rows[0];
-    if (!user) {
+    if(!user)
+    {
+      return res.json("Invalid username or password");
+    }
+    
+    const isMatch = await bcrypt.compare(password, user.sifra.toString());
+    if(!isMatch)
+    {
       return res.json("Invalid username or password");
     }
 
-    bcrypt.compare(password, user.sifra.toString(), (err, isMatch) => {
-      if (err) {
-        return res.json("Error comparing passwords");
-      }
-      if (!isMatch) {
-        return res.json("Invalid username or password");
-      }
+    const idRes = await client.query(getIdQuery, [email]);
+    const korisnikId = idRes.rows[0]?.korisnik_id; //u slucaju da je null postavice ga na null umisto da throwa error
+    
+    if(!korisnikId)
+    {
+      return res.json("No id"); //napravit sta ce se dogodit za ovaj response
+    }
+    const deleteQuery = [
+      { query: "DELETE FROM veze_korisnici_role WHERE korisnik_id = $1 OR korisnik_id1 = $1", values: [korisnikId] },   
+      { query: "DELETE FROM dogadaji WHERE korisnik_id = $1", values: [korisnikId] },
+      { query: "DELETE FROM app_sesije WHERE korisnik_id = $1", values: [korisnikId] },
+      { query: "DELETE FROM korisnici_role WHERE korisnik_id = $1", values: [korisnikId] }
+    ]; //niz s upitima za izbrisat korisnika iz svake tablice
 
-      const deleteQuery = "DELETE FROM korisnici_role WHERE email = $1";
-      
-      client.query(deleteQuery, [email], (deleteError) => {
-        if (deleteError) {
-          return res.json("Server error deleting account");
-        }
-        
-        return res.json("Account deleted successfully");
-      });
-    });
-  });
+    await client.query("BEGIN"); //zapocinjemo sa slanjem upitima ovo nam sluzi kako se nebi brisali parcijalno podaci iz baze u slucaju greske
+
+    for(const { query, values} of deleteQuery)
+    {
+      await client.query(query, values);
+    }
+
+    await client.query("COMMIT"); //zavrsavamo s upitima za brisanje
+    
+    return res.json("Account deleted successfully"); //response...
+  } catch(error)
+  {
+    await client.query("ROLLBACK"); // ponistavamo ako smo izbrisali samo dio podataka
+    console.error("Error", error);
+    return res.json("Server error while deleting account");
+  }
 });
 
 
