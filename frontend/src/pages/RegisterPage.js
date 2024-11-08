@@ -45,7 +45,7 @@ function RegisterPage() {
           alert("Passwords do not match");
         }
         if (response.data === "password < 8") {
-          alert("password is too short, atleast 8 characters");
+          alert("password is too short, at least 8 characters");
         }
       })
       .catch((error) => {
