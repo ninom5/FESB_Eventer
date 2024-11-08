@@ -38,12 +38,14 @@ function RegisterPage() {
         if (response.data === "Username already exists") {
           alert("Username already exists");
         }
-        if(response.data === "username contains @")
-        {
+        if (response.data === "username contains @") {
           alert("Username can't contain @");
         }
         if (response.data === "Passwords do not match") {
           alert("Passwords do not match");
+        }
+        if (response.data === "password < 8") {
+          alert("password is too short, atleast 8 characters");
         }
       })
       .catch((error) => {
