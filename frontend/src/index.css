@@ -1,5 +1,8 @@
 @import "./styles/registerPage.css";
 @import "./styles/loginPage.css";
+@import "./styles/homePage.css";
+@import "./styles/header.css";
+@import "./styles/footer.css";
 
 * {
   margin: 0;
