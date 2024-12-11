@@ -23,6 +23,7 @@ function LoginPage() {
         const { accessToken } = response.data;
 
         if (accessToken) {
+          localStorage.setItem("email", response.data.email);
           localStorage.setItem("accessToken", response.data.accessToken);
           navigate("/");
         } else if (response.data === "Invalid username or password") {

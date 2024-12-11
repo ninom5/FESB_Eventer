@@ -125,8 +125,123 @@ app.post("/login", (req, res) => {
 
       res.json({
         accessToken: Accesstoken,
+        email: user.email,
       });
     });
+  });
+});
+
+//Get user data endpoint
+app.get("/user", (req, res) => {
+  const email = req.query.email;
+
+  const sql = `
+    SELECT 
+      kr.*,
+      m.NAZIV AS mjesto_name
+    FROM 
+      KORISNICI_ROLE kr
+    LEFT JOIN 
+      MJESTA m ON kr.MJESTO_ID = m.MJESTO_ID
+    WHERE 
+      kr.email = $1
+  `;
+  client.query(sql, [email], (error, result) => {
+    if (error) {
+      console.error("Error fetching user data:", error);
+      return res.status(500).send("Error fetching user data");
+    }
+
+    if (result.rows.length === 0) {
+      return res.status(404).send("User not found");
+    }
+    res.json(result.rows[0]);
+  });
+});
+
+// Update user data endpoint
+app.put("/userUpdate", (req, res) => {
+  const {
+    email,
+    ime,
+    prezime,
+    username,
+    telefon,
+    status_id,
+    mjesto_name,
+    ulica,
+    picture_url,
+  } = req.body;
+
+  // Step 1: If the city is provided, check if it exists
+  let cityId = null;
+  if (mjesto_name) {
+    const cityCheckQuery = `SELECT * FROM MJESTA WHERE Naziv = $1`;
+    client.query(cityCheckQuery, [mjesto_name], (error, cityResult) => {
+      if (error) {
+        console.error("Error checking city:", error);
+        return res.status(500).send("Error checking city");
+      }
+
+      if (cityResult.rows.length === 0) {
+        return res.status(400).send("Invalid city name");
+      }
+
+      cityId = cityResult.rows[0].mjesto_id;
+
+      // Step 2: Proceed with updating the user data if the city is valid
+      updateUser();
+    });
+  } else {
+    // If no city provided, proceed without updating the city field
+    updateUser();
+  }
+
+  function updateUser() {
+    const updateQuery = `
+      UPDATE KORISNICI_ROLE
+      SET ime = $1, prezime = $2, username = $3, telefon = $4, status_id = $5,
+          mjesto_id = $6, ulica = $7, picture_url = $8, 
+          modified_by = CURRENT_USER, date_modified = CURRENT_TIMESTAMP
+      WHERE email = $9
+    `;
+
+    const values = [
+      ime,
+      prezime,
+      username,
+      telefon,
+      status_id,
+      cityId || null, // Use cityId if provided, else null
+      ulica,
+      picture_url,
+      email,
+    ];
+
+    client.query(updateQuery, values, (error, result) => {
+      if (error) {
+        console.error("Error updating user:", error);
+        return res.status(500).send("Error updating user data");
+      }
+
+      if (result.rowCount === 0) {
+        return res.status(404).send("User not found");
+      }
+
+      res.send("User profile updated successfully");
+    });
+  }
+});
+
+// Endpoint to fetch cities
+app.get("/cities", (req, res) => {
+  const sql = "SELECT * FROM MJESTA";
+  client.query(sql, (error, result) => {
+    if (error) {
+      console.error("Error fetching cities:", error);
+      return res.status(500).send("Error fetching cities");
+    }
+    res.json(result.rows);
   });
 });
 

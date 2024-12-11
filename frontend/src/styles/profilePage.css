@@ -1,0 +1,175 @@
+.profilePage {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  margin: 0;
+  font-family: "Roboto", sans-serif;
+  background-color: #f0f2f5;
+  color: #333;
+}
+
+.profileContainer {
+  max-width: 700px;
+  width: 90%;
+  padding: 30px;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 20px auto;
+}
+
+.profilePicture {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  position: relative;
+}
+
+.profilePicture img {
+  border-radius: 50%;
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  border: 4px solid #007bff;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.uploadButton {
+  cursor: pointer;
+  color: #007bff;
+  font-weight: bold;
+  font-size: 14px;
+  text-decoration: underline;
+  transition: color 0.3s ease;
+}
+
+.uploadButton:hover {
+  color: #0056b3;
+}
+
+.profileInfoContainer {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  gap: 30%;
+  text-align: left;
+}
+
+.profileField {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.profileField label {
+  font-size: 14px;
+  color: #555;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.profileField p {
+  font-size: 16px;
+  color: #333;
+  margin: 0;
+}
+
+.profileField input {
+  font-size: 16px;
+  color: #333;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 5px;
+  flex: 1;
+}
+.profileField .value {
+  font-size: 16px;
+  font-weight: normal;
+  color: #333;
+  margin-top: 5px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.profileField select {
+  font-size: 16px;
+  color: #333;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 5px;
+  flex: 1;
+  background-color: white;
+}
+
+.profileField select:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+.disabledField {
+  background-color: #f0f0f0;
+  color: #777;
+  border: 1px solid #ccc;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.profileField input[disabled] {
+  background-color: #f0f0f0;
+  color: #777;
+  border: 1px solid #ccc;
+}
+
+.profileActions {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.saveButton,
+.cancelButton,
+.editButton {
+  padding: 12px 25px;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.saveButton {
+  background-color: #28a745;
+  color: white;
+}
+
+.saveButton:hover {
+  background-color: #218838;
+}
+
+.cancelButton {
+  background-color: #dc3545;
+  color: white;
+}
+
+.cancelButton:hover {
+  background-color: #c82333;
+}
+
+.editButton {
+  background-color: #007bff;
+  color: white;
+}
+
+.editButton:hover {
+  background-color: #0056b3;
+}
