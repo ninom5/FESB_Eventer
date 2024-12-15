@@ -75,7 +75,7 @@ function ProfilePage() {
   return (
     <div className="profilePage">
       <Header />
-      <div className="profileContainer">
+      <div className='profileContainer'>
         <div className="profilePicture">
           <img src={noPlayerPicture} alt="Profile" />
           {isEditing && (

@@ -245,6 +245,81 @@ app.get("/cities", (req, res) => {
   });
 });
 
+app.post("/search", async(req, res) => {
+  const searchValue = req.body.searchValue.trim() !== '' ? `%${req.body.searchValue}%` : '%';;
+
+  const sqlUsers = `SELECT KR.IME, KR.PREZIME, 
+                        CASE 
+                          WHEN KR.TKORISNIKA = 'Kreator' THEN M.NAZIV || ', ' || KR.ULICA 
+                          ELSE NULL 
+                        END AS ADRESA 
+                    FROM KORISNICI_ROLE KR
+                    LEFT JOIN MJESTA M ON M.MJESTO_ID = KR.MJESTO_ID
+                    WHERE KR.IME ILIKE $1 OR KR.PREZIME ILIKE $1`;
+
+  const sqlEvents = `SELECT KR.IME || ' ' ||KR.PREZIME IME, D.NAZIV, M.NAZIV || ', ' || U.NAZIV ADRESA 
+                      FROM DOGADAJI D
+                      LEFT JOIN KORISNICI_ROLE KR ON KR.KORISNIK_ID = D.KORISNIK_ID
+                      LEFT JOIN MJESTA M ON M.MJESTO_ID = D.MJESTO_ID
+                      LEFT JOIN ULICE U ON U.ULICA_ID = D.ULICA_ID
+                      WHERE D.NAZIV ILIKE $1`;
+
+  try{
+  const [eventsResult, usersResult] = await Promise.all([
+      client.query(sqlEvents, [searchValue]),
+      client.query(sqlUsers, [searchValue]),
+    ]);
+
+    return res.json({
+      events: eventsResult.rows,
+      users: usersResult.rows,
+    });
+  }catch(err){
+    console.log(err);
+  }
+})
+app.post("/mostActiveUsers", (req, res) => {
+  const email = req.body.email;
+  const sql = `SELECT KR.KORISNIK_ID, KR.IME, KR.PREZIME, 
+                      KR.USERNAME, KR.EMAIL, KR.PICTURE_URL, KR.TKORISNIKA,
+                      CASE 
+                            WHEN KR.TKORISNIKA = 'Kreator' THEN 
+                                (SELECT COUNT(DOG.DOGADAJ_ID) 
+                                FROM DOGADAJI DOG
+                                WHERE DOG.KORISNIK_ID = KR.KORISNIK_ID)
+                            WHEN KR.TKORISNIKA = 'Korisnik' THEN 
+                                (SELECT COUNT(VEKD.DOGADAJ_ID) 
+                                FROM VEZE_KORISNICI_DOGADAJI VEKD
+                                WHERE VEKD.KORISNIK_ID = KR.KORISNIK_ID)
+                            ELSE 0
+                        END AS BROJDOGADAJA,
+                      (SELECT COALESCE(TO_CHAR(MIN(DOG.VRIJEME), 'DD.MM.YYYY HH24:MI'), 'No upcoming events') sljedeci
+                        FROM DOGADAJI DOG
+                        WHERE 
+                            (EXISTS (
+                                SELECT 1
+                                FROM VEZE_KORISNICI_DOGADAJI VEKD
+                                WHERE VEKD.KORISNIK_ID = KR.KORISNIK_ID AND VEKD.DOGADAJ_ID = DOG.DOGADAJ_ID
+                            ) OR DOG.KORISNIK_ID = KR.KORISNIK_ID)  -- Provera ako postoji događaj za korisnika u DOGADAJI
+                        AND DOG.VRIJEME >= CURRENT_DATE)
+                    FROM korisnici_role KR
+                    LEFT JOIN DOGADAJI D ON D.KORISNIK_ID = KR.KORISNIK_ID
+                    WHERE KR.EMAIL != $1
+                    GROUP BY KR.KORISNIK_ID, 
+                        KR.IME, 
+                        KR.PREZIME, 
+                        KR.USERNAME, 
+                        KR.EMAIL
+                    ORDER BY COUNT(D.DOGADAJ_ID) DESC
+                    LIMIT 5`;
+  client.query(sql, [email], (error, result) => {
+    if (error) {
+    console.error("Error fetching most active users:", error);
+      return res.status(500).send("Error fetching most active users");
+    }
+    return res.json(result.rows);
+  });
+})
 app.listen(5000, () => {
   console.log("Server is running on port 5000");
 });
