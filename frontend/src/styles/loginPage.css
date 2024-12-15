@@ -1,55 +1,86 @@
 .login-page {
-  background-image: url("../assets/LoginBackground.png");
+  background-image: url("../assets/LoginBackground.jpeg");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
   display: flex;
-  justify-content: center;
-  align-items: center;
+  justify-content: space-between;
+  align-items: start;
   height: 100vh;
   margin: 0;
-  font-family: Arial, sans-serif;
+  font-family: 'Lato', sans-serif;
 }
 
+.login-infoLogo{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 100%;
+  height: 100%;
+  color: white;
+  padding: 4vh 2vw;
+}
+
+
+.login-info{
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 30vh;
+  padding-top: 10vh;
+  gap: 2vh;
+}
+
+.login-info h2{
+  font-size: 6.5rem;;
+}
+
+.login-info h4{
+  font-size: 2em;
+}
+
+.login-logo img {
+  width: 10rem;
+  height: auto;
+  opacity: 0.7;
+}
 .login-div {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   gap: 15px;
-  background-color: rgba(255, 255, 255, 0.103);
-  border-radius: 15px;
+  background-color: rgba(33, 33, 33, 0.544);
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  border: 1px groove;
+  border-left-color: white;
   width: 30%;
   min-width: 250px;
+  height: 100vh;
   backdrop-filter: blur(10px);
 }
 
 .login-div h2 {
   display: flex;
-  justify-content: center;
+  font-family: 'Roboto', sans-serif;
   font-size: 2em;
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 10px;
-  border-radius: 14px 14px 0 0;
-  border-bottom: 2px solid rgba(0, 0, 0, 0.027);
-  background-color: #0b0c0c9a;
+  width: 85%;
+  padding-bottom: 0.5vh;
+  border-bottom: 1px groove white;
   color: white;
 }
 
 .login-form {
   display: flex;
   flex-direction: column;
-  width: 100%;
-  padding: 0 30px;
+  width: 85%;
   gap: 12px;
 }
 
 .login-form input {
   padding: 10px;
   border: none;
-  background-color: rgba(0, 0, 0, 0.408);
+  background-color: rgba(44, 44, 44, 0.408);
   outline: none;
   border-radius: 5px;
   margin: 0;
@@ -64,7 +95,7 @@
 }
 
 .login-form input:hover {
-  background-color: rgba(0, 0, 0, 0.6);
+  background-color: rgba(44, 44, 44, 0.7);
 }
 
 .login-form input {
@@ -81,7 +112,7 @@
 }
 
 .input-icon {
-  color: #007bff;
+  color: white;
   font-size: 18px;
   width: 10%;
 }
@@ -97,34 +128,36 @@
 .login-button {
   margin-top: 10px;
   padding: 10px;
-  border: none;
+  border: 0.5px groove;
+  border-color: rgb(44, 44, 44);
   border-radius: 5px;
-  background-color: #007bff;
-  color: white;
+  background-color: rgb(44, 44, 44);
+  color: rgba(255, 255, 255, 0.624);
   font-size: 16px;
   cursor: pointer;
   width: 100%;
 }
 
 .login-button {
-  transition: background-color 0.3s, color 0.3s;
+  transition: background-color 0.3s, color 0.3s, border-color 0.3s ease;
 }
 
 .login-button:hover {
-  background-color: #0056b3;
-  color: #eaeaea;
+  border-color: white;
+  background-color: rgba(44, 44, 44, 0.48);
+  color: white;
 }
 
 .register-link {
   margin-top: 15px;
   font-size: 14px;
-  color: #062546;
+  color: rgba(255, 255, 255, 0.624);
   text-decoration: none;
   margin-bottom: 15px;
 }
 
 .register-link strong {
-  color: #0056b3;
+  color: white;
 }
 
 .register-link:hover {

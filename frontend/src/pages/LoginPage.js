@@ -3,6 +3,7 @@ import { useState } from "react";
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser, faLock } from "@fortawesome/free-solid-svg-icons";
+import headerLogo from "../assets/headerLogo.jpg";
 
 function LoginPage() {
   const navigate = useNavigate();
@@ -37,9 +38,17 @@ function LoginPage() {
 
   return (
     <div className="login-page">
+      <div className="login-infoLogo">
+        <div className="login-info">
+          <h2>Welcome to Eventer</h2>
+          <h4>Looking for a fun way to fulfill your day? <br/>Register now and start searching for your next day full of exicetement!</h4>
+        </div>
+        <div className="login-logo">
+            <img src={headerLogo} alt="Eventer logo" />
+        </div>
+      </div>
       <div className="login-div">
         <h2>Login</h2>
-
         <form onSubmit={handleSubmit} className="login-form">
           <div className="input-group">
             <div className="input-with-icon">
