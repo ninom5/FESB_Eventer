@@ -1,7 +1,7 @@
 function Footer() {
   return (
     <footer className="homePage-footer">
-      <p>{new Date().getFullYear()} Eventer. Sva Prava Pridržana.</p>
+      <p>{new Date().getFullYear()} Eventer. All Rights Reserved.</p>
     </footer>
   );
 }

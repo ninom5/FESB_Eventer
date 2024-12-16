@@ -41,10 +41,14 @@ function LoginPage() {
       <div className="login-infoLogo">
         <div className="login-info">
           <h2>Welcome to Eventer</h2>
-          <h4>Looking for a fun way to fulfill your day? <br/>Register now and start searching for your next day full of exicetement!</h4>
+          <h4>
+            Looking for a fun way to fulfill your day? <br />
+            Register now and start searching for your next day full of
+            exicetement!
+          </h4>
         </div>
         <div className="login-logo">
-            <img src={headerLogo} alt="Eventer logo" />
+          <img src={headerLogo} alt="Eventer logo" />
         </div>
       </div>
       <div className="login-div">
