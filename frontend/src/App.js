@@ -5,6 +5,7 @@ import RegisterPage from "./pages/RegisterPage";
 import HomePage from "./pages/HomePage";
 import ProtectedRoute from "../src/ProtectedRoute";
 import ProfilePage from "./pages/ProfilePage";
+import EventsPage from "./pages/EventsPage";
 
 function App() {
   return (
@@ -27,6 +28,14 @@ function App() {
           element={
             <ProtectedRoute>
               <ProfilePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/createEvent"
+          element={
+            <ProtectedRoute>
+              <EventsPage />
             </ProtectedRoute>
           }
         />

@@ -159,6 +159,56 @@ app.get("/user", (req, res) => {
   });
 });
 
+app.post("/createEvent", (req, res) => {
+  const eventData = req.body;
+
+  try {
+    const cityCheckQuery = `SELECT * FROM MJESTA WHERE Naziv = $1`;
+    client.query(cityCheckQuery, [eventData.mjesto_name], (error, result) => {
+      if (error) return res.status(500).send("Error checking city");
+
+      if (result.rows.length === 0) return res.send("Cities not found");
+
+      eventData.mjesto_id = result.rows[0].mjesto_id;
+
+      eventData.Naziv = req.body.Naziv;
+
+      eventData.vrijeme = parseDate(req.body.date, req.body.vrijeme);
+      function parseDate(date, time) {
+        return new Date(`${date}T${time}`).toISOString();
+      }
+
+      eventData.opis = req.body.opis;
+      eventData.korisnik_id = req.body.korisnik_id;
+      eventData.created_by = req.body.korisnik_id;
+      eventData.date_created = Date.now();
+    });
+
+    const newEventQuery = `INSERT INTO dogadaji (naziv, vrijeme, opis, korisnik_id, mjesto_id, created_by, date_created) 
+    VALUES ($1, $2, $3, $4, $5, $6, $7)`;
+
+    client.query(
+      newEventQuery,
+      [
+        eventData.Naziv,
+        eventData.vrijeme,
+        eventData.opis,
+        eventData.korisnik_id,
+        eventData.mjesto_id,
+        eventData.created_by,
+        eventData.date_created,
+      ],
+      (error, result) => {
+        if (error) return res.status(500).send("Error inserting event");
+
+        return res.send("New event created successfully");
+      }
+    );
+  } catch (error) {
+    return res.status(500).send("Error inserting event");
+  }
+});
+
 // Update user data endpoint
 app.put("/userUpdate", (req, res) => {
   const {
@@ -175,6 +225,7 @@ app.put("/userUpdate", (req, res) => {
 
   // Step 1: If the city is provided, check if it exists
   let cityId = null;
+
   if (mjesto_name) {
     const cityCheckQuery = `SELECT * FROM MJESTA WHERE Naziv = $1`;
     client.query(cityCheckQuery, [mjesto_name], (error, cityResult) => {
@@ -189,11 +240,30 @@ app.put("/userUpdate", (req, res) => {
 
       cityId = cityResult.rows[0].mjesto_id;
 
-      // Step 2: Proceed with updating the user data if the city is valid
+      // Proceed with updating the user data if the city is valid
       updateUser();
     });
   } else {
     // If no city provided, proceed without updating the city field
+    updateUser();
+  }
+
+  if (telefon)
+    //neradi spremanje u bazu bez leading spacesa
+    validateAndUpdateUser();
+  function validateAndUpdateUser() {
+    const userTelephoneInput = telefon.trim();
+
+    if (
+      userTelephoneInput.replace(/\s/g, "").length < 9 ||
+      userTelephoneInput.replace(/\s/g, "").length > 15 ||
+      !/^\+?[\d\s]+$/.test(userTelephoneInput)
+    ) {
+      return res.status(400).send("Invalid telephone number");
+    }
+
+    req.body.telefon = userTelephoneInput;
+
     updateUser();
   }
 
@@ -210,7 +280,7 @@ app.put("/userUpdate", (req, res) => {
       ime,
       prezime,
       username,
-      telefon,
+      telefon || null,
       status_id,
       cityId || null, // Use cityId if provided, else null
       ulica,
@@ -245,8 +315,9 @@ app.get("/cities", (req, res) => {
   });
 });
 
-app.post("/search", async(req, res) => {
-  const searchValue = req.body.searchValue.trim() !== '' ? `%${req.body.searchValue}%` : '%';;
+app.post("/search", async (req, res) => {
+  const searchValue =
+    req.body.searchValue.trim() !== "" ? `%${req.body.searchValue}%` : "%";
 
   const sqlUsers = `SELECT KR.IME, KR.PREZIME, 
                         CASE 
@@ -264,8 +335,8 @@ app.post("/search", async(req, res) => {
                       LEFT JOIN ULICE U ON U.ULICA_ID = D.ULICA_ID
                       WHERE D.NAZIV ILIKE $1`;
 
-  try{
-  const [eventsResult, usersResult] = await Promise.all([
+  try {
+    const [eventsResult, usersResult] = await Promise.all([
       client.query(sqlEvents, [searchValue]),
       client.query(sqlUsers, [searchValue]),
     ]);
@@ -274,10 +345,10 @@ app.post("/search", async(req, res) => {
       events: eventsResult.rows,
       users: usersResult.rows,
     });
-  }catch(err){
+  } catch (err) {
     console.log(err);
   }
-})
+});
 app.post("/mostActiveUsers", (req, res) => {
   const email = req.body.email;
   const sql = `SELECT KR.KORISNIK_ID, KR.IME, KR.PREZIME, 
@@ -314,12 +385,13 @@ app.post("/mostActiveUsers", (req, res) => {
                     LIMIT 5`;
   client.query(sql, [email], (error, result) => {
     if (error) {
-    console.error("Error fetching most active users:", error);
+      console.error("Error fetching most active users:", error);
       return res.status(500).send("Error fetching most active users");
     }
     return res.json(result.rows);
   });
-})
+});
+
 app.listen(5000, () => {
   console.log("Server is running on port 5000");
 });

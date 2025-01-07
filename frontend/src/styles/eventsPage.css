@@ -1,0 +1,92 @@
+/* Main container for the events page */
+.eventsPage {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    background-color: #f9f9f9;
+}
+
+.addEventButton {
+    height: 2.5rem;
+    width: 8rem;
+    background-color: lightgray;
+    color: black;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    margin: 1rem 0;
+}
+
+.addEventButton:hover {
+    background-color: black;
+    color: lightgray;
+}
+
+.newEventForm {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    border-radius: 8px;
+    padding: 1rem;
+    background-color: #ffffff;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+
+
+.newEventForm input,
+.newEventForm textarea,
+.newEventForm select {
+    height: 2rem;
+    width: 100%;
+    margin: 0.5rem 0;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 1rem;
+    box-sizing: border-box;
+}
+
+
+.newEventForm label {
+    width: 100%;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+
+.newEventForm button {
+    height: 2.5rem;
+    width: 100%;
+    background-color: lightgray;
+    color: black;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    margin-top: 1rem;
+}
+
+.newEventForm button:hover {
+    background-color: black;
+    color: lightgray;
+}
+
+footer {
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    padding: 1rem 0;
+    width: 100%;
+    position: relative;
+    bottom: 0;
+}
