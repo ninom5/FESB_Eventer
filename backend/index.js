@@ -159,56 +159,41 @@ app.get("/user", (req, res) => {
   });
 });
 
-app.post("/createEvent", (req, res) => {
-  const eventData = req.body;
+app.post("/createEvent", async (req, res) => {
+  const { eventName, city, date, startTime, description, userId, street } =
+    req.body;
 
   try {
-    const cityCheckQuery = `SELECT * FROM MJESTA WHERE Naziv = $1`;
-    client.query(cityCheckQuery, [eventData.mjesto_name], (error, result) => {
-      if (error) return res.status(500).send("Error checking city");
+    const mjestoQuery = `SELECT mjesto_id FROM mjesta WHERE naziv = $1`;
+    const mjestoResult = await client.query(mjestoQuery, [city]);
 
-      if (result.rows.length === 0) return res.send("Cities not found");
+    if (mjestoResult.rows.length === 0) return res.send("Invalid city name");
 
-      eventData.mjesto_id = result.rows[0].mjesto_id;
+    const mjesto_id = mjestoResult.rows[0].mjesto_id;
 
-      eventData.Naziv = req.body.Naziv;
+    const eventDateTime = new Date(`${date}T${startTime}`).toISOString();
 
-      eventData.vrijeme = parseDate(req.body.date, req.body.vrijeme);
-      function parseDate(date, time) {
-        return new Date(`${date}T${time}`).toISOString();
-      }
+    const newEventQuery = `INSERT INTO dogadaji (naziv, vrijeme, opis, korisnik_id, mjesto_id, created_by) 
+    VALUES ($1, $2, $3, $4, $5, $6)`;
 
-      eventData.opis = req.body.opis;
-      eventData.korisnik_id = req.body.korisnik_id;
-      eventData.created_by = req.body.korisnik_id;
-      eventData.date_created = Date.now();
-    });
+    const newEventValues = [
+      eventName,
+      eventDateTime,
+      description,
+      userId,
+      mjesto_id,
+      userId,
+      // street_id
+    ];
 
-    const newEventQuery = `INSERT INTO dogadaji (naziv, vrijeme, opis, korisnik_id, mjesto_id, created_by, date_created) 
-    VALUES ($1, $2, $3, $4, $5, $6, $7)`;
+    await client.query(newEventQuery, newEventValues);
 
-    client.query(
-      newEventQuery,
-      [
-        eventData.Naziv,
-        eventData.vrijeme,
-        eventData.opis,
-        eventData.korisnik_id,
-        eventData.mjesto_id,
-        eventData.created_by,
-        eventData.date_created,
-      ],
-      (error, result) => {
-        if (error) return res.status(500).send("Error inserting event");
-
-        return res.send("New event created successfully");
-      }
-    );
+    return res.send("Event inserted successfully");
   } catch (error) {
-    return res.status(500).send("Error inserting event");
+    console.error("Error inserting event:", error);
+    return res.send("Error inserting event");
   }
 });
-
 // Update user data endpoint
 app.put("/userUpdate", (req, res) => {
   const {
@@ -225,6 +210,20 @@ app.put("/userUpdate", (req, res) => {
 
   // Step 1: If the city is provided, check if it exists
   let cityId = null;
+  let newTelefon = null;
+
+  if (telefon) {
+    const trimmedTelefon = telefon.trim().split(" ").join("");
+
+    if (
+      trimmedTelefon.length < 9 ||
+      trimmedTelefon.length > 15 ||
+      !/^\+?[\d\s]+$/.test(trimmedTelefon)
+    )
+      return res.status(400).send("Invalid telephone number");
+
+    newTelefon = trimmedTelefon;
+  }
 
   if (mjesto_name) {
     const cityCheckQuery = `SELECT * FROM MJESTA WHERE Naziv = $1`;
@@ -240,30 +239,9 @@ app.put("/userUpdate", (req, res) => {
 
       cityId = cityResult.rows[0].mjesto_id;
 
-      // Proceed with updating the user data if the city is valid
       updateUser();
     });
   } else {
-    // If no city provided, proceed without updating the city field
-    updateUser();
-  }
-
-  if (telefon)
-    //neradi spremanje u bazu bez leading spacesa
-    validateAndUpdateUser();
-  function validateAndUpdateUser() {
-    const userTelephoneInput = telefon.trim();
-
-    if (
-      userTelephoneInput.replace(/\s/g, "").length < 9 ||
-      userTelephoneInput.replace(/\s/g, "").length > 15 ||
-      !/^\+?[\d\s]+$/.test(userTelephoneInput)
-    ) {
-      return res.status(400).send("Invalid telephone number");
-    }
-
-    req.body.telefon = userTelephoneInput;
-
     updateUser();
   }
 
@@ -280,7 +258,7 @@ app.put("/userUpdate", (req, res) => {
       ime,
       prezime,
       username,
-      telefon || null,
+      newTelefon || null,
       status_id,
       cityId || null, // Use cityId if provided, else null
       ulica,

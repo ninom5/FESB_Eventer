@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import axios from "axios";
 
 function EventsPage() {
   const [showForm, setShowForm] = useState(false);
@@ -15,6 +16,19 @@ function EventsPage() {
     street: "",
   });
 
+  const [cities, setCities] = useState([]);
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:5000/cities")
+      .then((response) => {
+        setCities(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching data: ", error);
+      });
+  }, []);
+
   const handleButtonClick = () => {
     setShowForm((prevShowForm) => !prevShowForm);
     setButtonText((prevText) =>
@@ -22,14 +36,37 @@ function EventsPage() {
     );
   };
 
-  const [cities, setCities] = useState([]);
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setEventData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
 
-  useEffect(() => {
-    fetch("/api/cities")
-      .then((response) => response.json())
-      .then((data) => setCities(data))
-      .catch((error) => console.error("Error fetching cities:", error));
-  }, []);
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    axios
+      .post("http://localhost:5000/createEvent", eventData)
+      .then((response) => {
+        alert("Event created successfully!");
+        setShowForm(false);
+        setButtonText("Add event");
+        setEventData({
+          eventName: "",
+          date: "",
+          startTime: "",
+          description: "",
+          city: "",
+          street: "",
+        });
+      })
+      .catch((error) => {
+        console.error("Error creating event: ", error);
+        alert("Failed to create event. Please try again.");
+      });
+  };
 
   return (
     <div className="eventsPage">
@@ -41,42 +78,72 @@ function EventsPage() {
       </button>
 
       {showForm && (
-        <form className="newEventForm">
+        <form className="newEventForm" onSubmit={handleSubmit}>
           <label>
             Naziv događaja:
-            <input type="text" name="eventName" />
+            <input
+              type="text"
+              name="eventName"
+              value={eventData.eventName}
+              onChange={handleInputChange}
+              required
+            />
           </label>
           <label>
-            Datum događaja:
-            <input type="date" name="date" />
+            Datum:
+            <input
+              type="date"
+              name="date"
+              value={eventData.date}
+              onChange={handleInputChange}
+              required
+            />
           </label>
-
           <label>
             Vrijeme početka:
-            <input type="time" name="startTime" />
+            <input
+              type="time"
+              name="startTime"
+              value={eventData.startTime}
+              onChange={handleInputChange}
+              required
+            />
           </label>
-
           <label>
-            Opis događaja:
-            <textarea name="description" />
+            Opis:
+            <textarea
+              name="description"
+              value={eventData.description}
+              onChange={handleInputChange}
+              required
+            />
           </label>
-
           <label>
             Grad:
-            <select name="city">
+            <select
+              name="city"
+              value={eventData.city}
+              onChange={handleInputChange}
+              required
+            >
+              <option value="">Select a city</option>
               {cities.map((city) => (
-                <option key={city.id} value={city.name}>
-                  {city.name}
+                <option key={city.mjesto_id} value={city.naziv}>
+                  {city.naziv}
                 </option>
               ))}
             </select>
           </label>
-
           <label>
-            Ulica:
-            <textarea name="street" />
+            ulica:
+            <input
+              type="text"
+              name="street"
+              value={eventData.street}
+              onChange={handleInputChange}
+              required
+            />
           </label>
-
           <button type="submit">Submit</button>
         </form>
       )}
