@@ -32,7 +32,7 @@ function App() {
           }
         />
         <Route
-          path="/createEvent"
+          path="/events"
           element={
             <ProtectedRoute>
               <EventsPage />

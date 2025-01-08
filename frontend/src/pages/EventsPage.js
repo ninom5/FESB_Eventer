@@ -22,32 +22,34 @@ function EventsPage() {
   useEffect(() => {
     const email = localStorage.getItem("email");
 
+    // Fetch user data to get userId
     axios
       .get(`http://localhost:5000/user?email=${email}`)
       .then((response) => {
-        const uId = response.data.id;
-        console.log("User ID: ", uId);
+        const userId = response.data.korisnik_id;
+        console.log("User ID:", userId);
         setEventData((prevData) => ({
           ...prevData,
-          userId: uId,
+          userId: userId,
         }));
       })
       .catch((error) => {
-        console.error("Error fetching user ID: ", error);
+        console.error("Error fetching user ID:", error);
       });
 
+    // Fetch list of cities
     axios
       .get("http://localhost:5000/cities")
       .then((response) => {
         setCities(response.data);
       })
       .catch((error) => {
-        console.error("Error fetching data: ", error);
+        console.error("Error fetching cities:", error);
       });
   }, []);
 
   const handleButtonClick = () => {
-    setShowForm((prevShowForm) => !prevShowForm);
+    setShowForm((prev) => !prev);
     setButtonText((prevText) =>
       prevText === "Add event" ? "Cancel" : "Add event"
     );
@@ -67,21 +69,26 @@ function EventsPage() {
     axios
       .post("http://localhost:5000/createEvent", eventData)
       .then((response) => {
-        alert("Event created successfully!");
-        setShowForm(false);
-        setButtonText("Add event");
-        setEventData({
-          eventName: "",
-          date: "",
-          startTime: "",
-          description: "",
-          city: "",
-          street: "",
-          userId: null,
-        });
+        const data = response.data;
+        if (data === "Event inserted successfully") {
+          alert(data);
+          setShowForm(false);
+          setButtonText("Add event");
+          setEventData({
+            eventName: "",
+            date: "",
+            startTime: "",
+            description: "",
+            city: "",
+            street: "",
+            userId: null,
+          });
+        } else {
+          alert(data);
+        }
       })
       .catch((error) => {
-        console.error("Error creating event: ", error);
+        console.error("Error creating event:", error);
         alert("Failed to create event. Please try again.");
       });
   };
@@ -98,7 +105,7 @@ function EventsPage() {
       {showForm && (
         <form className="newEventForm" onSubmit={handleSubmit}>
           <label>
-            Naziv događaja:
+            Event name:
             <input
               type="text"
               name="eventName"
@@ -108,7 +115,7 @@ function EventsPage() {
             />
           </label>
           <label>
-            Datum:
+            Date:
             <input
               type="date"
               name="date"
@@ -118,7 +125,7 @@ function EventsPage() {
             />
           </label>
           <label>
-            Vrijeme početka:
+            Time:
             <input
               type="time"
               name="startTime"
@@ -128,7 +135,7 @@ function EventsPage() {
             />
           </label>
           <label>
-            Opis:
+            Description:
             <textarea
               name="description"
               value={eventData.description}
@@ -137,7 +144,7 @@ function EventsPage() {
             />
           </label>
           <label>
-            Grad:
+            City:
             <select
               name="city"
               value={eventData.city}
@@ -145,15 +152,15 @@ function EventsPage() {
               required
             >
               <option value="">Select a city</option>
-              {cities.map((city) => (
-                <option key={city.mjesto_id} value={city.naziv}>
-                  {city.naziv}
+              {cities.map((c) => (
+                <option key={c.mjesto_id} value={c.naziv}>
+                  {c.naziv}
                 </option>
               ))}
             </select>
           </label>
           <label>
-            ulica:
+            Street:
             <input
               type="text"
               name="street"
