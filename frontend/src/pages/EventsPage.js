@@ -152,7 +152,7 @@ function EventsPage() {
               />
               <div className="charCount">
                 {" "}
-                {charCount} / {maxLength} characters used
+                {charCount} / {maxLength}
               </div>
             </div>
           </label>

@@ -54,6 +54,14 @@ function ProfilePage() {
   };
 
   const handleSave = () => {
+    if (
+      updatedData.ime === "" ||
+      updatedData.prezime === "" ||
+      updatedData.username === ""
+    ) {
+      alert("Name, Surname and Username fields are required!");
+      return;
+    }
     axios
       .put("http://localhost:5000/userUpdate", updatedData)
       .then(() => {
@@ -75,7 +83,7 @@ function ProfilePage() {
   return (
     <div className="profilePage">
       <Header />
-      <div className='profileContainer'>
+      <div className="profileContainer">
         <div className="profilePicture">
           <img src={noPlayerPicture} alt="Profile" />
           {isEditing && (
