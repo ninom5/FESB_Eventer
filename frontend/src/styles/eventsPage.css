@@ -43,22 +43,37 @@
 .newEventForm input,
 .newEventForm textarea,
 .newEventForm select {
-  height: 2rem;
-  width: 100%;
-  margin: 0.5rem 0;
-  padding-left: 8px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  font-size: 1rem;
-  box-sizing: border-box;
+    height: 2.5rem;
+    width: 100%;
+    margin: 0.5rem 0;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 1rem;
+    box-sizing: border-box;
 }
 
-.newEventForm textarea {
-  max-width: 100%;
-  min-height: 100px;
-  max-height: 150px;
-  resize: none;
+.descriptionContainer
+{
+    position: relative;
 }
+#description {
+    width: 100%;
+    padding: 12px;
+    padding-right: 50px;
+    box-sizing: border-box;
+    min-height: 120px;
+    font-size: 16px;
+    resize: none;
+  }
+  
+  .charCount {
+    position: absolute;
+    bottom: 12px;
+    right: 10px;
+    font-size: 12px;
+    color: #888;
+  }
 
 textarea::-webkit-scrollbar {
   width: 15px;
