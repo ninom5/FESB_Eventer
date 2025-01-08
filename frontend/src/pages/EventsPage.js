@@ -18,6 +18,8 @@ function EventsPage() {
   });
 
   const [cities, setCities] = useState([]);
+  const [charCount, setCharCount] = useState(0);
+  const maxLength = 1000;
 
   useEffect(() => {
     const email = localStorage.getItem("email");
@@ -57,6 +59,9 @@ function EventsPage() {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+
+    if (name === "description") setCharCount(value.length);
+
     setEventData((prevData) => ({
       ...prevData,
       [name]: value,
@@ -136,12 +141,20 @@ function EventsPage() {
           </label>
           <label>
             Description:
-            <textarea
-              name="description"
-              value={eventData.description}
-              onChange={handleInputChange}
-              required
-            />
+            <div className="descriptionContainer">
+              <textarea
+                id="description"
+                name="description"
+                value={eventData.description}
+                onChange={handleInputChange}
+                required
+                maxLength={maxLength}
+              />
+              <div className="charCount">
+                {" "}
+                {charCount} / {maxLength} characters used
+              </div>
+            </div>
           </label>
           <label>
             City:

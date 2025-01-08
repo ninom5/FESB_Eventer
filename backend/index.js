@@ -149,6 +149,14 @@ app.post("/createEvent", (req, res) => {
     const mjesto_id = mjestoResult.rows[0].mjesto_id;
 
     const eventDateTime = new Date(`${date}T${startTime}`).toISOString();
+
+    if (eventDateTime < new Date().toISOString())
+      return res.send("Invalid date and time");
+
+    let descriptionTrim = description.trim().split(" ").join("");
+    if (descriptionTrim.length < 10)
+      return res.send("Description is too short");
+
     const insertEventQuery = `
       INSERT INTO dogadaji (naziv, vrijeme, opis, korisnik_id, mjesto_id, ulica, created_by)
       VALUES ($1, $2, $3, $4, $5, $6, $7)
