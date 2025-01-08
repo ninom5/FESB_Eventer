@@ -159,6 +159,41 @@ app.get("/user", (req, res) => {
   });
 });
 
+app.post("/createEvent", async (req, res) => {
+  const { eventName, city, date, startTime, description, userId, street } =
+    req.body;
+
+  try {
+    const mjestoQuery = `SELECT mjesto_id FROM mjesta WHERE naziv = $1`;
+    const mjestoResult = await client.query(mjestoQuery, [city]);
+
+    if (mjestoResult.rows.length === 0) return res.send("Invalid city name");
+
+    const mjesto_id = mjestoResult.rows[0].mjesto_id;
+
+    const eventDateTime = new Date(`${date}T${startTime}`).toISOString();
+
+    const newEventQuery = `INSERT INTO dogadaji (naziv, vrijeme, opis, korisnik_id, mjesto_id, created_by) 
+    VALUES ($1, $2, $3, $4, $5, $6)`;
+
+    const newEventValues = [
+      eventName,
+      eventDateTime,
+      description,
+      userId,
+      mjesto_id,
+      userId,
+      // street_id
+    ];
+
+    await client.query(newEventQuery, newEventValues);
+
+    return res.send("Event inserted successfully");
+  } catch (error) {
+    console.error("Error inserting event:", error);
+    return res.send("Error inserting event");
+  }
+});
 // Update user data endpoint
 app.put("/userUpdate", (req, res) => {
   const {
@@ -175,6 +210,21 @@ app.put("/userUpdate", (req, res) => {
 
   // Step 1: If the city is provided, check if it exists
   let cityId = null;
+  let newTelefon = null;
+
+  if (telefon) {
+    const trimmedTelefon = telefon.trim().split(" ").join("");
+
+    if (
+      trimmedTelefon.length < 9 ||
+      trimmedTelefon.length > 15 ||
+      !/^\+?[\d\s]+$/.test(trimmedTelefon)
+    )
+      return res.status(400).send("Invalid telephone number");
+
+    newTelefon = trimmedTelefon;
+  }
+
   if (mjesto_name) {
     const cityCheckQuery = `SELECT * FROM MJESTA WHERE Naziv = $1`;
     client.query(cityCheckQuery, [mjesto_name], (error, cityResult) => {
@@ -189,11 +239,9 @@ app.put("/userUpdate", (req, res) => {
 
       cityId = cityResult.rows[0].mjesto_id;
 
-      // Step 2: Proceed with updating the user data if the city is valid
       updateUser();
     });
   } else {
-    // If no city provided, proceed without updating the city field
     updateUser();
   }
 
@@ -210,7 +258,7 @@ app.put("/userUpdate", (req, res) => {
       ime,
       prezime,
       username,
-      telefon,
+      newTelefon || null,
       status_id,
       cityId || null, // Use cityId if provided, else null
       ulica,
@@ -245,8 +293,9 @@ app.get("/cities", (req, res) => {
   });
 });
 
-app.post("/search", async(req, res) => {
-  const searchValue = req.body.searchValue.trim() !== '' ? `%${req.body.searchValue}%` : '%';;
+app.post("/search", async (req, res) => {
+  const searchValue =
+    req.body.searchValue.trim() !== "" ? `%${req.body.searchValue}%` : "%";
 
   const sqlUsers = `SELECT KR.IME, KR.PREZIME, 
                         CASE 
@@ -264,8 +313,8 @@ app.post("/search", async(req, res) => {
                       LEFT JOIN ULICE U ON U.ULICA_ID = D.ULICA_ID
                       WHERE D.NAZIV ILIKE $1`;
 
-  try{
-  const [eventsResult, usersResult] = await Promise.all([
+  try {
+    const [eventsResult, usersResult] = await Promise.all([
       client.query(sqlEvents, [searchValue]),
       client.query(sqlUsers, [searchValue]),
     ]);
@@ -274,10 +323,10 @@ app.post("/search", async(req, res) => {
       events: eventsResult.rows,
       users: usersResult.rows,
     });
-  }catch(err){
+  } catch (err) {
     console.log(err);
   }
-})
+});
 app.post("/mostActiveUsers", (req, res) => {
   const email = req.body.email;
   const sql = `SELECT KR.KORISNIK_ID, KR.IME, KR.PREZIME, 
@@ -314,12 +363,13 @@ app.post("/mostActiveUsers", (req, res) => {
                     LIMIT 5`;
   client.query(sql, [email], (error, result) => {
     if (error) {
-    console.error("Error fetching most active users:", error);
+      console.error("Error fetching most active users:", error);
       return res.status(500).send("Error fetching most active users");
     }
     return res.json(result.rows);
   });
-})
+});
+
 app.listen(5000, () => {
   console.log("Server is running on port 5000");
 });

@@ -4,6 +4,7 @@
 @import "./styles/header.css";
 @import "./styles/footer.css";
 @import "./styles/profilePage.css";
+@import "./styles/eventsPage.css";
 
 * {
   margin: 0;
