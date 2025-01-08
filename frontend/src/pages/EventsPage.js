@@ -14,11 +14,28 @@ function EventsPage() {
     description: "",
     city: "",
     street: "",
+    userId: null,
   });
 
   const [cities, setCities] = useState([]);
 
   useEffect(() => {
+    const email = localStorage.getItem("email");
+
+    axios
+      .get(`http://localhost:5000/user?email=${email}`)
+      .then((response) => {
+        const uId = response.data.id;
+        console.log("User ID: ", uId);
+        setEventData((prevData) => ({
+          ...prevData,
+          userId: uId,
+        }));
+      })
+      .catch((error) => {
+        console.error("Error fetching user ID: ", error);
+      });
+
     axios
       .get("http://localhost:5000/cities")
       .then((response) => {
@@ -60,6 +77,7 @@ function EventsPage() {
           description: "",
           city: "",
           street: "",
+          userId: null,
         });
       })
       .catch((error) => {
