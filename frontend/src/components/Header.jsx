@@ -111,7 +111,7 @@ function Header() {
             <a href="/events">Events</a>
           </li>
           <li>
-            <a href="/login" onClick={localStorage.removeItem("accessToken")}>
+            <a href="/login" onClick={() => localStorage.removeItem("accessToken")}>
               Log out
             </a>
           </li>

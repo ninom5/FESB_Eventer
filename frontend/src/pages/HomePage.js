@@ -1,6 +1,5 @@
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import Map from "../components/Map";
 import { useState, useEffect } from "react";
 import noPlayerPicture from "../assets/noPlayerIcon.svg";
 import axios from "axios";
@@ -75,8 +74,6 @@ function HomePage() {
           })}
         </div>
       </div>
-
-      <Map />
 
       <Footer />
     </div>
