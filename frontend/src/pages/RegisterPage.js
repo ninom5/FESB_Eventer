@@ -29,23 +29,21 @@ function RegisterPage() {
       .post("http://localhost:5000/register", registerValues)
       .then((response) => {
         if (response.data === "Successfully registered") {
+          alert("Successfully registered");
           navigate("/login");
         }
 
-        if (response.data === "Email already exists") {
+        if (response.data === "Email already exists")
           alert("Email already exists");
-        }
 
-        if (response.data === "Username already exists") {
+        if (response.data === "Username already exists")
           alert("Username already exists");
-        }
-        if(response.data === "username contains @")
-        {
+
+        if (response.data === "username contains @")
           alert("Username can't contain @");
-        }
-        if (response.data === "Passwords do not match") {
+
+        if (response.data === "Passwords do not match")
           alert("Passwords do not match");
-        }
       })
       .catch((error) => {
         console.error("Error registering:", error);
@@ -54,15 +52,19 @@ function RegisterPage() {
 
   return (
     <div className="register-page">
-       <div className="login-infoLogo">
-              <div className="login-info">
-                <h2>Welcome to Eventer</h2>
-                <h4>Looking for a fun way to fulfill your day? <br/>Register now and start searching for your next day full of exicetement!</h4>
-              </div>
-              <div className="login-logo">
-                  <img src={headerLogo} alt="Eventer logo" />
-              </div>
-            </div>
+      <div className="login-infoLogo">
+        <div className="login-info">
+          <h2>Welcome to Eventer</h2>
+          <h4>
+            Looking for a fun way to fulfill your day? <br />
+            Register now and start searching for your next day full of
+            exicetement!
+          </h4>
+        </div>
+        <div className="login-logo">
+          <img src={headerLogo} alt="Eventer logo" />
+        </div>
+      </div>
       <div className="register-div">
         <h2>Register</h2>
 
