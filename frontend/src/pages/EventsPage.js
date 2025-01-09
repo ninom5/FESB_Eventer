@@ -19,7 +19,6 @@ function EventsPage() {
     userId: null,
   });
 
-
   const [charCount, setCharCount] = useState(0);
   const maxLength = 1000;
 
@@ -31,7 +30,6 @@ function EventsPage() {
       .get(`http://localhost:5000/user?email=${email}`)
       .then((response) => {
         const userId = response.data.korisnik_id;
-        console.log("User ID:", userId);
         setEventData((prevData) => ({
           ...prevData,
           userId: userId,
@@ -40,7 +38,6 @@ function EventsPage() {
       .catch((error) => {
         console.error("Error fetching user ID:", error);
       });
-
   }, []);
 
   const handleButtonClick = () => {
@@ -92,7 +89,7 @@ function EventsPage() {
   };
 
   const [autocomplete, setAutocomplete] = useState(null);
-  const [markerPosition, setMarkerPosition] = useState(null); 
+  const [markerPosition, setMarkerPosition] = useState(null);
   const [zoom, setZoom] = useState(10);
   const [center, setCenter] = useState({ lat: 43.508133, lng: 16.440193 });
   const [eventLocation, setEventLocation] = useState("");
@@ -104,7 +101,7 @@ function EventsPage() {
   const handlePlaceChanged = () => {
     if (autocomplete) {
       const place = autocomplete.getPlace();
-      
+
       if (place.geometry) {
         const location = place.geometry.location;
 
@@ -112,113 +109,128 @@ function EventsPage() {
           lat: location.lat(),
           lng: location.lng(),
         });
-  
-        setZoom(15); 
 
-        
-        handleInputChange({target: {name: 'city', value: place.address_components[1].long_name}});
-        handleInputChange({target: {name: 'street', value: place.address_components[0].long_name}});
+        setZoom(15);
+
+        handleInputChange({
+          target: {
+            name: "city",
+            value: place.address_components[1].long_name,
+          },
+        });
+        handleInputChange({
+          target: {
+            name: "street",
+            value: place.address_components[0].long_name,
+          },
+        });
 
         setEventLocation(place.formatted_address || "");
 
         const marker = new window.google.maps.marker.AdvancedMarkerElement({
           map: mapRef.current,
           position: {
-          lat: location.lat(),
-          lng: location.lng(),
-        },
+            lat: location.lat(),
+            lng: location.lng(),
+          },
         });
         marker.addListener("click", () => {
           alert("Advanced Marker Clicked!");
         });
-
       } else {
         alert("Odabrano mjesto nema geometrijsku lokaciju.");
       }
-      
     }
   };
   return (
     <div className="eventsPage">
       <Header />
-      <h1>Events Page</h1>
-
-      <div style={{display: 'flex', justifyContent: 'space-between', width: '80vw'}}>
-      {showForm && (
-        <form className="newEventForm" onSubmit={handleSubmit}>
-          <label>
-            Event name:
-            <input
-              type="text"
-              name="eventName"
-              value={eventData.eventName}
-              onChange={handleInputChange}
-              required
-            />
-          </label>
-          <label>
-            Date:
-            <input
-              type="date"
-              name="date"
-              value={eventData.date}
-              onChange={handleInputChange}
-              required
-            />
-          </label>
-          <label>
-            Time:
-            <input
-              type="time"
-              name="startTime"
-              value={eventData.startTime}
-              onChange={handleInputChange}
-              required
-            />
-          </label>
-          <label>
-            Location:
-            <Autocomplete 
-              onLoad={handleAutocompleteLoad} 
-              options={{componentRestrictions: { country: "HR" }}} 
-              onPlaceChanged={handlePlaceChanged} 
-            >
-            <input
-              type="text"
-              name="street"
-              value={eventLocation}
-              onChange={(e)=>setEventLocation(e.target.value)}
-              required
-            />
-            </Autocomplete>
-          </label>
-          <label>
-            Description:
-            <div className="descriptionContainer">
-              <textarea
-                id="description"
-                name="description"
-                value={eventData.description}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          width: "80vw",
+        }}
+      >
+        {showForm && (
+          <form className="newEventForm" onSubmit={handleSubmit}>
+            <label>
+              Event name:
+              <input
+                type="text"
+                name="eventName"
+                value={eventData.eventName}
                 onChange={handleInputChange}
                 required
-                maxLength={maxLength}
               />
-              <div className="charCount">
-                {" "}
-                {charCount} / {maxLength}
+            </label>
+            <label>
+              Date:
+              <input
+                type="date"
+                name="date"
+                value={eventData.date}
+                onChange={handleInputChange}
+                required
+              />
+            </label>
+            <label>
+              Time:
+              <input
+                type="time"
+                name="startTime"
+                value={eventData.startTime}
+                onChange={handleInputChange}
+                required
+              />
+            </label>
+            <label>
+              Location:
+              <Autocomplete
+                onLoad={handleAutocompleteLoad}
+                options={{ componentRestrictions: { country: "HR" } }}
+                onPlaceChanged={handlePlaceChanged}
+              >
+                <input
+                  type="text"
+                  name="street"
+                  value={eventLocation}
+                  onChange={(e) => setEventLocation(e.target.value)}
+                  required
+                />
+              </Autocomplete>
+            </label>
+            <label>
+              Description:
+              <div className="descriptionContainer">
+                <textarea
+                  id="description"
+                  name="description"
+                  value={eventData.description}
+                  onChange={handleInputChange}
+                  required
+                  maxLength={maxLength}
+                />
+                <div className="charCount">
+                  {" "}
+                  {charCount} / {maxLength}
+                </div>
               </div>
-            </div>
-          </label>
-          <button type="submit" >Submit</button>
-        </form>
-      )}
-      <Map 
-        style={{width: showForm ? '60%' : '100%', height: '70vh', transition: 'width 1s ease'}} 
-        markerPosition={markerPosition} 
-        mapRef={mapRef}
-        center={center}
-        zoom={zoom}
-      />
+            </label>
+            <button type="submit">Submit</button>
+          </form>
+        )}
+        <Map
+          style={{
+            width: showForm ? "60%" : "100%",
+            height: "70vh",
+            transition: "width 1s ease",
+          }}
+          markerPosition={markerPosition}
+          mapRef={mapRef}
+          center={center}
+          zoom={zoom}
+        />
       </div>
       <button className="addEventButton" onClick={handleButtonClick}>
         {buttonText}

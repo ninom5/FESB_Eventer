@@ -144,7 +144,6 @@ app.post("/createEvent", (req, res) => {
       console.error("Error fetching city:", error);
       return res.status(500).send("Error fetching city");
     }
-    if (mjestoResult.rows.length === 0) return res.send("Invalid city name");
 
     const mjesto_id = mjestoResult.rows[0].mjesto_id;
 
