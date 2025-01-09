@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import Map from "../components/Map";
 import axios from "axios";
 
 function EventsPage() {
@@ -102,6 +103,8 @@ function EventsPage() {
     <div className="eventsPage">
       <Header />
       <h1>Events Page</h1>
+
+      <Map />
 
       <button className="addEventButton" onClick={handleButtonClick}>
         {buttonText}
