@@ -1,13 +1,19 @@
-import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
+import { GoogleMap, LoadScript } from "@react-google-maps/api";
 
-function Map() {
+const libraries = ["marker", "places"];
+
+function Map({style, mapRef, center, zoom}) {
   return (
-    <LoadScript googleMapsApiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY}>
+    <LoadScript googleMapsApiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY} libraries={libraries}>
       <GoogleMap
-        mapContainerStyle={{ height: "70vh", width: "70%" }}
-        center={{ lat: 43.508133, lng: 16.440193 }}
-        zoom={10}
-      ></GoogleMap>
+        mapContainerStyle={style}
+        ref={mapRef}
+        onLoad={(map) => mapRef.current = map}
+        center={center}
+        options={{streetViewControl: false, mapTypeControl: false, mapId: "2dccd7b6ea472154"}}
+        zoom={zoom}
+      >
+      </GoogleMap>
     </LoadScript>
   );
 }
