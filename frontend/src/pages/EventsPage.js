@@ -30,7 +30,6 @@ function EventsPage() {
       .get(`http://localhost:5000/user?email=${email}`)
       .then((response) => {
         const userId = response.data.korisnik_id;
-        console.log("User ID:", userId);
         setEventData((prevData) => ({
           ...prevData,
           userId: userId,
@@ -146,8 +145,6 @@ function EventsPage() {
   return (
     <div className="eventsPage">
       <Header />
-      <h1>Events Page</h1>
-
       <div
         style={{
           display: "flex",
@@ -220,9 +217,7 @@ function EventsPage() {
                 </div>
               </div>
             </label>
-            <button type="submit" style={{ "margin-top": "10px" }}>
-              Submit
-            </button>
+            <button type="submit">Submit</button>
           </form>
         )}
         <Map
