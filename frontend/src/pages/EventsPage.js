@@ -217,7 +217,9 @@ function EventsPage() {
                 </div>
               </div>
             </label>
-            <button type="submit">Submit</button>
+            <button type="submit" style={{ "margin-top": "10px" }}>
+              Submit
+            </button>
           </form>
         )}
         <Map
