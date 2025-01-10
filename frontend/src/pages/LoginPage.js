@@ -4,6 +4,7 @@ import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser, faLock } from "@fortawesome/free-solid-svg-icons";
 import headerLogo from "../assets/headerLogo.jpg";
+import background from "../assets/background.png";
 
 function LoginPage() {
   const navigate = useNavigate();

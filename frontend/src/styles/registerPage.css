@@ -1,5 +1,5 @@
 .register-page {
-  background-image: url("../assets/LoginBackground.jpeg");
+  background-image: url("../assets/background.png");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -8,6 +8,11 @@
   height: 100vh;
   margin: 0;
   font-family: Arial, sans-serif;
+  filter: brightness(0.85);
+}
+
+.login-info {
+  color: rgba(255, 255, 255, 0.85);
 }
 
 .register-div {
@@ -27,12 +32,12 @@
 
 .register-div h2 {
   display: flex;
-  font-family: 'Roboto', sans-serif;
+  font-family: "Roboto", sans-serif;
   font-size: 2em;
   width: 85%;
   padding-bottom: 0.5vh;
   border-bottom: 1px groove white;
-  color: white;
+  color: rgb(255, 255, 255);
 }
 
 .register-form {

@@ -44,37 +44,36 @@
 .newEventForm input,
 .newEventForm textarea,
 .newEventForm select {
-    height: 2em;
-    width: 100%;
-    margin: 0.5em 0;
-    padding: 0.5em;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    font-size: 0.9em;
-    box-sizing: border-box;
+  height: 2.2em;
+  width: 100%;
+  margin: 0.5em 0;
+  padding: 0.5em;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 0.9em;
+  box-sizing: border-box;
 }
 
-.descriptionContainer
-{
-    position: relative;
+.descriptionContainer {
+  position: relative;
 }
 #description {
-    width: 100%;
-    padding: 12px;
-    padding-right: 50px;
-    box-sizing: border-box;
-    min-height: 10vh;
-    font-size: 0.8em;
-    resize: none;
-  }
-  
-  .charCount {
-    position: absolute;
-    bottom: 12px;
-    right: 10px;
-    font-size: 0.5em;
-    color: #888;
-  }
+  width: 100%;
+  padding: 12px;
+  padding-right: 50px;
+  box-sizing: border-box;
+  min-height: 12vh;
+  font-size: 0.8em;
+  resize: none;
+}
+
+.charCount {
+  position: absolute;
+  bottom: 12px;
+  right: 10px;
+  font-size: 0.6em;
+  color: #888;
+}
 
 textarea::-webkit-scrollbar {
   width: 15px;
@@ -99,7 +98,7 @@ textarea::-webkit-scrollbar-thumb {
 }
 
 .newEventForm button {
-  height: 4vh;
+  height: 6vh;
   width: 100%;
   background-color: lightgray;
   color: black;
