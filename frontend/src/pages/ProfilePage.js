@@ -186,23 +186,27 @@ function ProfilePage() {
               </div>
               <div className="profileField">
                 <label>Street:</label>
-                <Autocomplete
-                  onLoad={handleAutocompleteLoad}
-                  onPlaceChanged={handlePlaceChanged}
-                >
-                  <input
-                    type="text"
-                    name="street"
-                    value={userLocation}
-                    onChange={(e) => {
-                      setUserLocation(e.target.value);
-                      setUpdatedData((prevState) => ({
-                        ...prevState,
-                        ulica: e.target.value,
-                      }));
-                    }}
-                  />
-                </Autocomplete>
+                {isEditing ? (
+                  <Autocomplete
+                    onLoad={handleAutocompleteLoad}
+                    onPlaceChanged={handlePlaceChanged}
+                  >
+                    <input
+                      type="text"
+                      name="street"
+                      value={userLocation}
+                      onChange={(e) => {
+                        setUserLocation(e.target.value);
+                        setUpdatedData((prevState) => ({
+                          ...prevState,
+                          ulica: e.target.value,
+                        }));
+                      }}
+                    />
+                  </Autocomplete>
+                ) : (
+                  <p>{userData.ulica || "Not specified"}</p>
+                )}
               </div>
             </div>
             <div className="profileColumn">

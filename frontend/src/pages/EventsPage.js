@@ -60,6 +60,7 @@ function EventsPage() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    console.log("Submitting eventData:", eventData); // <-- Add this
 
     axios
       .post("http://localhost:5000/createEvent", eventData)
@@ -84,7 +85,12 @@ function EventsPage() {
       })
       .catch((error) => {
         console.error("Error creating event:", error);
-        alert("Failed to create event. Please try again.");
+
+        if (error.response && error.response.data) {
+          alert(error.response.data);
+        } else {
+          alert("Failed to create event. Please try again.");
+        }
       });
   };
 
@@ -98,50 +104,67 @@ function EventsPage() {
   const handleAutocompleteLoad = (autocompleteInstance) => {
     setAutocomplete(autocompleteInstance);
   };
+
   const handlePlaceChanged = () => {
-    if (autocomplete) {
-      const place = autocomplete.getPlace();
+    if (!autocomplete) return;
 
-      if (place.geometry) {
-        const location = place.geometry.location;
-
-        setCenter({
-          lat: location.lat(),
-          lng: location.lng(),
-        });
-
-        setZoom(15);
-
-        handleInputChange({
-          target: {
-            name: "city",
-            value: place.address_components[1].long_name,
-          },
-        });
-        handleInputChange({
-          target: {
-            name: "street",
-            value: place.address_components[0].long_name,
-          },
-        });
-
-        setEventLocation(place.formatted_address || "");
-
-        const marker = new window.google.maps.marker.AdvancedMarkerElement({
-          map: mapRef.current,
-          position: {
-            lat: location.lat(),
-            lng: location.lng(),
-          },
-        });
-        marker.addListener("click", () => {
-          alert("Advanced Marker Clicked!");
-        });
-      } else {
-        alert("Odabrano mjesto nema geometrijsku lokaciju.");
-      }
+    const place = autocomplete.getPlace();
+    if (!place || !place.address_components || !place.geometry) {
+      alert("Odabrano mjesto nema geometrijsku lokaciju ili nedostaju podaci.");
+      return;
     }
+
+    const location = place.geometry.location;
+
+    setCenter({
+      lat: location.lat(),
+      lng: location.lng(),
+    });
+
+    setZoom(15);
+
+    const addressComponents = place.address_components;
+    let streetNumber = "";
+    let route = "";
+    let postalCode = "";
+    let city = "";
+    let country = "";
+
+    addressComponents.forEach((comp) => {
+      if (comp.types.includes("street_number")) streetNumber = comp.long_name;
+
+      if (comp.types.includes("route") || comp.types.includes("square"))
+        route = comp.long_name;
+
+      if (comp.types.includes("locality")) city = comp.long_name;
+
+      if (comp.types.includes("administrative_area_level_1") && !city)
+        city = comp.long_name;
+
+      if (comp.types.includes("postal_code")) postalCode = comp.long_name;
+
+      if (comp.types.includes("country")) country = comp.long_name;
+    });
+
+    const fullStreet = (route + " " + streetNumber).trim();
+
+    handleInputChange({ target: { name: "city", value: city } });
+    handleInputChange({ target: { name: "street", value: fullStreet } });
+
+    setEventLocation(place.formatted_address || "");
+
+    const marker = new window.google.maps.marker.AdvancedMarkerElement({
+      map: mapRef.current,
+      position: {
+        lat: location.lat(),
+        lng: location.lng(),
+      },
+    });
+    marker.addListener("click", () => {
+      // alert("Advanced Marker Clicked!");
+    });
   };
+
   return (
     <div className="eventsPage">
       <Header />
@@ -217,7 +240,7 @@ function EventsPage() {
                 </div>
               </div>
             </label>
-            <button type="submit" style={{ "margin-top": "10px" }}>
+            <button type="submit" style={{ marginTop: "10px" }}>
               Submit
             </button>
           </form>

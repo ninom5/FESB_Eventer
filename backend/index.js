@@ -134,35 +134,49 @@ app.get("/user", (req, res) => {
   });
 });
 
-app.post("/createEvent", (req, res) => {
-  const { eventName, city, date, startTime, description, userId, street } =
-    req.body;
+app.post("/createEvent", async (req, res) => {
+  try {
+    const { eventName, city, date, startTime, description, userId, street } =
+      req.body;
 
-  const mjestoQuery = `SELECT mjesto_id FROM mjesta WHERE naziv = $1`;
-  client.query(mjestoQuery, [city], (error, mjestoResult) => {
-    if (error) {
-      console.error("Error fetching city:", error);
-      return res.status(500).send("Error fetching city");
-    }
+    if (!eventName || !city || !date || !startTime || !description || !userId)
+      return res.status(400).send("Missing required fields.");
 
-    const mjesto_id = mjestoResult.rows[0].mjesto_id;
+    const eventDateTime = new Date(`${date}T${startTime}`);
+    const now = new Date();
 
-    const eventDateTime = new Date(`${date}T${startTime}`).toISOString();
+    if (eventDateTime <= now)
+      return res.status(400).send("Invalid date/time (cannot be in the past).");
 
-    if (eventDateTime < new Date().toISOString())
-      return res.send("Invalid date and time");
-
-    let descriptionTrim = description.trim().split(" ").join("");
+    const descriptionTrim = description.trim().replace(/\s+/g, "");
     if (descriptionTrim.length < 10)
-      return res.send("Description is too short");
+      return res
+        .status(400)
+        .send("Description is too short (min. 10 characters ignoring spaces).");
+
+    let mjesto_id;
+    const findMjestoSQL = "SELECT mjesto_id FROM mjesta WHERE naziv = $1";
+    let result = await client.query(findMjestoSQL, [city]);
+
+    if (result.rows.length > 0) {
+      mjesto_id = result.rows[0].mjesto_id;
+    } else {
+      const insertMjestoSQL = `
+        INSERT INTO mjesta (naziv)
+        VALUES ($1)
+        RETURNING mjesto_id
+      `;
+      result = await client.query(insertMjestoSQL, [city]);
+      mjesto_id = result.rows[0].mjesto_id;
+    }
 
     const insertEventQuery = `
       INSERT INTO dogadaji (naziv, vrijeme, opis, korisnik_id, mjesto_id, ulica, created_by)
       VALUES ($1, $2, $3, $4, $5, $6, $7)
     `;
-    const newEventValues = [
+    const eventValues = [
       eventName,
-      eventDateTime,
+      eventDateTime.toISOString(),
       description,
       userId,
       mjesto_id,
@@ -170,15 +184,13 @@ app.post("/createEvent", (req, res) => {
       userId,
     ];
 
-    client.query(insertEventQuery, newEventValues, (error, result) => {
-      if (error) {
-        console.error("Error inserting event:", error);
-        return res.status(500).send("Error inserting event");
-      }
+    await client.query(insertEventQuery, eventValues);
 
-      return res.send("Event inserted successfully");
-    });
-  });
+    return res.send("Event inserted successfully.");
+  } catch (error) {
+    console.error("Error in /createEvent:", error);
+    return res.status(500).send("An error occurred while creating the event.");
+  }
 });
 
 app.put("/userUpdate", (req, res) => {
