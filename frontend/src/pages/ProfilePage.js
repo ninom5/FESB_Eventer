@@ -32,17 +32,25 @@ function ProfilePage() {
       const place = autocomplete.getPlace();
 
       const addressComponents = place.address_components || [];
+
       const street = addressComponents.find((component) =>
         component.types.includes("route")
       )?.long_name;
+
+      const streetNumber = addressComponents.find((component) =>
+        component.types.includes("street_number")
+      )?.long_name;
+
       const city = addressComponents.find((component) =>
         component.types.includes("locality")
       )?.long_name;
 
+      const fullStreet = (street + " " + streetNumber).trim();
+
       setUpdatedData((prevState) => ({
         ...prevState,
         mjesto_name: city || "",
-        ulica: street || "",
+        ulica: fullStreet || "",
       }));
 
       setUserLocation(place.formatted_address || "");
@@ -194,7 +202,7 @@ function ProfilePage() {
                     <input
                       type="text"
                       name="street"
-                      value={userLocation}
+                      value={updatedData.ulica || ""}
                       onChange={(e) => {
                         setUserLocation(e.target.value);
                         setUpdatedData((prevState) => ({

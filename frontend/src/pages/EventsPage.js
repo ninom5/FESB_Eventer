@@ -60,7 +60,7 @@ function EventsPage() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Submitting eventData:", eventData); // <-- Add this
+    console.log("Submitting eventData:", eventData);
 
     axios
       .post("http://localhost:5000/createEvent", eventData)
