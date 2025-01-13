@@ -8,7 +8,7 @@
   height: 100vh;
   margin: 0;
   font-family: Arial, sans-serif;
-  filter: brightness(0.85);
+  filter: brightness(0.75);
 }
 
 .login-info {
