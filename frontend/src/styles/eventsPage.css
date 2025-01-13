@@ -26,6 +26,11 @@
   color: lightgray;
 }
 
+.eventsPage-buttons {
+  display: flex;
+  gap: 30px;
+}
+
 .newEventForm {
   display: flex;
   flex-direction: column;

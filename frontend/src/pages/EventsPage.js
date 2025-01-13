@@ -5,6 +5,7 @@ import Map from "../components/Map";
 import axios from "axios";
 import EventForm from "../components/EventsPage/EventForm";
 import AddEventButton from "../components/EventsPage/AddEventButton";
+import SeeMyEventsButton from "../components/EventsPage/SeeMyEventsButton";
 
 function EventsPage() {
   const [showForm, setShowForm] = useState(false);
@@ -18,6 +19,8 @@ function EventsPage() {
     city: "",
     street: "",
     userId: null,
+    latitude: null,
+    longitude: null,
   });
 
   const [charCount, setCharCount] = useState(0);
@@ -78,17 +81,26 @@ function EventsPage() {
       lat: location.lat(),
       lng: location.lng(),
     });
-
     setZoom(15);
 
-    const addressComponents = place.address_components;
+    setEventData((prevData) => ({
+      ...prevData,
+      latitude: location.lat(),
+      longitude: location.lng(),
+    }));
+
+    setMarkerPosition({
+      lat: location.lat(),
+      lng: location.lng(),
+    });
+
     let streetNumber = "";
     let route = "";
-    let postalCode = "";
     let city = "";
+    let postalCode = "";
     let country = "";
 
-    addressComponents.forEach((comp) => {
+    place.address_components.forEach((comp) => {
       if (comp.types.includes("street_number")) {
         streetNumber = comp.long_name;
       }
@@ -115,18 +127,6 @@ function EventsPage() {
     handleInputChange({ target: { name: "street", value: fullStreet } });
 
     setEventLocation(place.formatted_address || "");
-
-    const marker = new window.google.maps.marker.AdvancedMarkerElement({
-      map: mapRef.current,
-      position: {
-        lat: location.lat(),
-        lng: location.lng(),
-      },
-    });
-
-    marker.addListener("click", () => {
-      // alert("Advanced Marker Clicked!");
-    });
   };
 
   return (
@@ -167,10 +167,13 @@ function EventsPage() {
           zoom={zoom}
         />
       </div>
-      <AddEventButton
-        handleButtonClick={handleButtonClick}
-        buttonText={buttonText}
-      />
+      <div className="eventsPage-buttons">
+        <AddEventButton
+          handleButtonClick={handleButtonClick}
+          buttonText={buttonText}
+        />
+        <SeeMyEventsButton />
+      </div>
       <Footer />
     </div>
   );

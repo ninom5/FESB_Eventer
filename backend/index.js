@@ -136,23 +136,33 @@ app.get("/user", (req, res) => {
 
 app.post("/createEvent", async (req, res) => {
   try {
-    const { eventName, city, date, startTime, description, userId, street } =
-      req.body;
+    const {
+      eventName,
+      city,
+      date,
+      startTime,
+      description,
+      userId,
+      street,
+      longitude,
+      latitude,
+    } = req.body;
 
     if (!eventName || !city || !date || !startTime || !description || !userId)
       return res.status(400).send("Missing required fields.");
 
     const eventDateTime = new Date(`${date}T${startTime}`);
     const now = new Date();
-
-    if (eventDateTime <= now)
+    if (eventDateTime <= now) {
       return res.status(400).send("Invalid date/time (cannot be in the past).");
+    }
 
     const descriptionTrim = description.trim().replace(/\s+/g, "");
-    if (descriptionTrim.length < 10)
+    if (descriptionTrim.length < 10) {
       return res
         .status(400)
         .send("Description is too short (min. 10 characters ignoring spaces).");
+    }
 
     let mjesto_id;
     const findMjestoSQL = "SELECT mjesto_id FROM mjesta WHERE naziv = $1";
@@ -171,9 +181,20 @@ app.post("/createEvent", async (req, res) => {
     }
 
     const insertEventQuery = `
-      INSERT INTO dogadaji (naziv, vrijeme, opis, korisnik_id, mjesto_id, ulica, created_by)
-      VALUES ($1, $2, $3, $4, $5, $6, $7)
+      INSERT INTO dogadaji (
+        naziv,
+        vrijeme,
+        opis,
+        korisnik_id,
+        mjesto_id,
+        ulica,
+        longitude,
+        latitude,
+        created_by
+      )
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
     `;
+
     const eventValues = [
       eventName,
       eventDateTime.toISOString(),
@@ -181,6 +202,8 @@ app.post("/createEvent", async (req, res) => {
       userId,
       mjesto_id,
       street,
+      longitude,
+      latitude,
       userId,
     ];
 
@@ -375,6 +398,38 @@ app.post("/mostActiveUsers", (req, res) => {
     }
 
     return res.json(result.rows);
+  });
+});
+
+app.get("/events", (req, res) => {
+  const korisnik_id = req.query.korisnik_id;
+  const sql = `
+    SELECT 
+      D.DOGADAJ_ID,
+      D.NAZIV,
+      D.VRIJEME,
+      D.OPIS,
+      D.KORISNIK_ID,
+      D.MJESTO_ID,
+      D.ULICA,
+      D.CREATED_BY,
+      D.LATITUDE,        
+      D.LONGITUDE,       
+      M.NAZIV AS MJESTO_NAME
+    FROM 
+      DOGADAJI D
+    LEFT JOIN 
+      MJESTA M ON D.MJESTO_ID = M.MJESTO_ID
+    WHERE 
+      D.KORISNIK_ID = $1
+  `;
+  client.query(sql, [korisnik_id], (error, result) => {
+    if (error) {
+      console.error("Error fetching data: ", error);
+      return res.status(500).send("Error fetching data");
+    }
+
+    res.json(result.rows);
   });
 });
 

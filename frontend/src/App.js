@@ -6,6 +6,7 @@ import HomePage from "./pages/HomePage";
 import ProtectedRoute from "../src/ProtectedRoute";
 import ProfilePage from "./pages/ProfilePage";
 import EventsPage from "./pages/EventsPage";
+import MyEventsPage from "./pages/MyEventsPage";
 
 function App() {
   return (
@@ -36,6 +37,14 @@ function App() {
           element={
             <ProtectedRoute>
               <EventsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/myevents"
+          element={
+            <ProtectedRoute>
+              <MyEventsPage />
             </ProtectedRoute>
           }
         />
