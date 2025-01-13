@@ -2,36 +2,32 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px 5%;
+  padding: 10px 5%;
   background-color: #f3f2f2;
-  border-bottom: 2px solid #f0f0f0;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-  width:100%;
-  margin-bottom:10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  width: 100%;
 }
 
-.homePage-header div{
+.homePage-header div {
   display: flex;
   gap: 0.5vw;
   align-items: center;
 }
-.homePage-header input{
-  width: 20vw;
+
+.homePage-header input {
+  width: 15vw;
   height: 4vh;
   font-size: 1rem;
-  align-self: end;
 }
 
 .header-logo img {
-  width: 120px;
+  width: 100px;
   height: auto;
 }
 
 .homePage-navigation ul {
   display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 25px;
+  gap: 20px;
   list-style: none;
   margin: 0;
   padding: 0;
@@ -40,33 +36,25 @@
 .homePage-navigation a {
   text-decoration: none;
   color: black;
-  font-weight: 500;
   font-size: 1rem;
-  transition: color 0.3s ease, transform 0.3s ease;
+  font-weight: 500;
 }
 
 .homePage-navigation a:hover {
-  color: #007bff;
-  transform: scale(1.1);
+  text-decoration: underline;
 }
 
-.homePage-navigation a:active {
-  color: #0056b3;
-}
-
-/*fffsfsfsf*\
-/* Search Bar Container */
 .search-bar-container {
-  position: relative; /* Ključ za pozicioniranje rezultata */
-  display: flex; /* Centriranje sadržaja unutar kontejnera */
-  flex-direction: column; /* Osigurava vertikalno raspoređivanje */
-  align-items: center; /* Centriranje horizontalno */
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-left: 80px;
 }
 
-/* Search Input */
 .search-input {
-  width: auto; /* Dinamička širina */
-  max-width: 400px; /* Opcionalno ograničenje širine */
+  width: auto;
+  max-width: 400px;
   padding: 10px 15px;
   font-size: 16px;
   border: 1px solid #ccc;
@@ -74,27 +62,24 @@
   box-sizing: border-box;
 }
 
-/* Rezultati pretrage */
 .search-results {
-  position: absolute; /* Rezultati pretrage se odvajaju od toka */
+  position: absolute;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  top: calc(100% + 5px); /* Pozicionira ispod search input-a */
+  top: calc(100% + 5px);
   left: 0;
-  width: 100%; /* Rezultati iste širine kao input */
+  width: 100%;
   background-color: white;
   border: 1px solid #ccc;
   border-radius: 4px;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
   z-index: 1000;
-  max-height: 300px; /* Ograničenje visine za pretrage sa puno podataka */
+  max-height: 300px;
   overflow-y: auto;
   box-sizing: border-box;
-  text-align: left; /* Poravnanje teksta levo */
+  text-align: left;
 }
 
-/* Grupisani rezultati */
 .results-group {
   display: flex;
   flex-direction: column;
@@ -108,7 +93,6 @@
   font-size: 1rem;
   color: #555;
   text-transform: uppercase;
-  align-self: start;
 }
 
 .results-group ul {
