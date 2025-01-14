@@ -1,19 +1,23 @@
 .myEventsPage {
-  background-color: #d4d4d4;
+  background: linear-gradient(135deg, #fafafa 0%, #d4d4d4 100%);
+  min-height: 100vh;
 }
 
 .events-list {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
   align-items: center;
   margin: 30px;
   gap: 30px;
+  min-height: 80vh;
 }
 
 .event-card {
   background-color: #ffffff;
-  width: 40%;
-  border-radius: 8px;
+  width: 30%;
+  border-radius: 6px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
   transition: box-shadow 0.2s ease;
   display: flex;
@@ -21,16 +25,23 @@
   margin: 1rem;
 }
 
+.event-card:hover {
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
 .event-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 1rem;
+  background-color: #f7f7f7;
+  border-bottom: 1px solid #eee;
 }
 
 .event-header h3 {
   margin: 0;
-  font-size: 1.4rem;
+  font-size: 1.2rem;
+  color: #333;
 }
 
 .event-date {
@@ -38,19 +49,35 @@
   padding: 0.3rem 0.6rem;
   border-radius: 4px;
   color: #333;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
 }
 
 .event-body {
-  padding: 0 1rem 1rem;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 }
 
 .event-body p {
-  margin: 0.4rem 0;
-  line-height: 1.5;
+  margin: 0.5rem 0;
+  line-height: 1.4;
+  color: #555;
+}
+
+.time-text,
+.countdown-text {
+  font-weight: 600;
+  color: #444;
 }
 
 .event-description {
+  margin: 0.5rem 0;
+  height: 80px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  white-space: pre-wrap;
+  word-wrap: break-word;
   font-size: 0.95rem;
   color: #555;
 }
@@ -58,10 +85,13 @@
 .event-organizer {
   font-style: italic;
   margin-top: 0.3rem;
+  color: #444;
 }
 
 .event-location {
   margin-top: 0.5rem;
+  color: #333;
+  font-weight: 500;
 }
 
 .map-container {
@@ -77,4 +107,14 @@
   font-style: italic;
   color: #666;
   margin-top: 0.5rem;
+}
+
+.no-events {
+  font-size: 2.2rem;
+  color: #666;
+  margin-top: 1rem;
+  min-height: 80vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

@@ -1,20 +1,46 @@
 import React from "react";
 import Map from "../Map";
 
+function formatDateTime(timestamp) {
+  const dateObj = new Date(timestamp);
+
+  dateObj.setHours(dateObj.getHours() + 1);
+
+  const dateOptions = { year: "numeric", month: "2-digit", day: "2-digit" };
+  const dateString = dateObj.toLocaleDateString(undefined, dateOptions);
+
+  const timeOptions = { hour: "2-digit", minute: "2-digit", hour12: false };
+  const timeString = dateObj.toLocaleTimeString(undefined, timeOptions);
+
+  return { dateString, timeString };
+}
+
+function getCountdownString(timestamp) {
+  const now = new Date();
+  const originalDateObj = new Date(timestamp);
+
+  originalDateObj.setHours(originalDateObj.getHours() + 1);
+
+  const diffMs = originalDateObj - now;
+  const diffSec = Math.floor(diffMs / 1000);
+
+  const days = Math.floor(diffSec / (3600 * 24));
+  const hours = Math.floor((diffSec % (3600 * 24)) / 3600);
+  const minutes = Math.floor(((diffSec % (3600 * 24)) % 3600) / 60);
+  const seconds = ((diffSec % (3600 * 24)) % 3600) % 60;
+
+  let parts = [];
+  if (days > 0) parts.push(`${days}d`);
+  if (hours > 0) parts.push(`${hours}h`);
+  if (minutes > 0) parts.push(`${minutes}m`);
+  if (seconds > 0) parts.push(`${seconds}s`);
+
+  return `Countdown until event: ${parts.join(" ")}.`;
+}
+
 function EventCard({ event }) {
-  // Destructure additional props if you have them (e.g. organizer, imageUrl, etc.)
-  // For demonstration, let's assume you have `date`, `organizer`, and `imageUrl` in your data.
-  const {
-    naziv,
-    vrijeme,
-    opis,
-    ulica,
-    latitude,
-    longitude,
-    date,
-    organizer,
-    imageUrl,
-  } = event;
+  const { naziv, vrijeme, opis, ulica, latitude, longitude, date, organizer } =
+    event;
 
   const mapRef = React.useRef(null);
 
@@ -22,19 +48,27 @@ function EventCard({ event }) {
   const lng = parseFloat(longitude);
   const isLatLngValid = !isNaN(lat) && !isNaN(lng);
 
+  const { dateString, timeString } = formatDateTime(vrijeme);
+
+  const countdownText = getCountdownString(vrijeme);
+
   return (
     <div className="event-card">
       <div className="event-header">
         <h3>{naziv}</h3>
-        {date && <span className="event-date">{date}</span>}
+        {date ? (
+          <span className="event-date">{date}</span>
+        ) : (
+          <span className="event-date">{dateString}</span>
+        )}
       </div>
 
       <div className="event-body">
         <p className="time-text">
-          <strong>Time:</strong> {vrijeme}
+          <strong>Time:</strong> {timeString}
         </p>
 
-        <p className="event-description">{opis}</p>
+        <div className="event-description">{opis}</div>
 
         {organizer && (
           <p className="event-organizer">
@@ -45,6 +79,8 @@ function EventCard({ event }) {
         <p className="event-location">
           <strong>Address:</strong> {ulica}
         </p>
+
+        <p className="countdown-text">{countdownText}</p>
 
         {isLatLngValid ? (
           <div className="map-container">
