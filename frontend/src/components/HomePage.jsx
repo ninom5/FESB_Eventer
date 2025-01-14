@@ -1,4 +1,4 @@
-import headerLogo from "C:/Projekti/FESB_Eventer/frontend/src/assets/headerLogo.jpg";
+import headerLogo from "../assets/headerLogo.jpg";
 
 function HomePage() {
   return (

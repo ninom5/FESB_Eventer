@@ -6,6 +6,7 @@ import axios from "axios";
 import EventForm from "../components/EventsPage/EventForm";
 import AddEventButton from "../components/EventsPage/AddEventButton";
 import SeeMyEventsButton from "../components/EventsPage/SeeMyEventsButton";
+import RefreshEventsButton from "../components/EventsPage/RefreshEvents";
 
 function EventsPage() {
   const [showForm, setShowForm] = useState(false);
@@ -22,10 +23,15 @@ function EventsPage() {
     latitude: null,
     longitude: null,
   });
-
+  const [events, setEvents] = useState([]);
   const [charCount, setCharCount] = useState(0);
 
   useEffect(() => {
+    const interval = setInterval(() => {
+    getEvents();
+    }, 10);
+
+
     const email = localStorage.getItem("email");
     axios
       .get(`http://localhost:5000/user?email=${email}`)
@@ -39,7 +45,20 @@ function EventsPage() {
       .catch((error) => {
         console.error("Error fetching user ID:", error);
       });
+
+    return () => clearInterval(interval);
   }, []);
+
+  const getEvents = async() => {
+    try {
+      const resEvents = await axios.get('http://localhost:5000/allEvents');
+
+      setEvents(resEvents.data);
+
+    } catch(err) {
+      console.log(err);
+    }
+  }
 
   const handleButtonClick = () => {
     setShowForm((prev) => !prev);
@@ -143,6 +162,7 @@ function EventsPage() {
           <EventForm
             setEventData={setEventData}
             eventData={eventData}
+            getEvents={getEvents}
             handleInputChange={handleInputChange}
             setAutocomplete={setAutocomplete}
             handlePlaceChanged={handlePlaceChanged}
@@ -164,7 +184,11 @@ function EventsPage() {
           markerPosition={markerPosition}
           mapRef={mapRef}
           center={center}
+          setCenter={setCenter}
+          events={events}
+          showForm={showForm}
           zoom={zoom}
+          setZoom={setZoom}
         />
       </div>
       <div className="eventsPage-buttons">
@@ -173,6 +197,7 @@ function EventsPage() {
           buttonText={buttonText}
         />
         <SeeMyEventsButton />
+        <RefreshEventsButton handleButtonClick={getEvents}/>
       </div>
       <Footer />
     </div>

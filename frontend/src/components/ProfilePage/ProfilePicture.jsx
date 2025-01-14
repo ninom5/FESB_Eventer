@@ -1,4 +1,4 @@
-import noUserPicture from "C:/Projekti/FESB_Eventer/frontend/src/assets/noPlayerIcon.svg";
+import noUserPicture from "../../assets/noPlayerIcon.svg";
 
 function ProfilePicture() {
   return (

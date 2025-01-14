@@ -4,6 +4,7 @@ import axios from "axios";
 function EventForm({
   setEventData,
   eventData,
+  getEvents,
   handleInputChange,
   setAutocomplete,
   handlePlaceChanged,
@@ -44,6 +45,8 @@ function EventForm({
             userId: null,
             charCount: setCharCount(0),
           });
+
+          getEvents();
         } else {
           alert(data);
         }
