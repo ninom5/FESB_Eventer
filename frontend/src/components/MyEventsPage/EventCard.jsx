@@ -88,6 +88,7 @@ function EventCard({ event }) {
               style={{ width: "100%", height: "100%" }}
               center={{ lat, lng }}
               markerPosition={{ lat, lng }}
+              showForm={true}
               zoom={15}
               mapRef={mapRef}
             />

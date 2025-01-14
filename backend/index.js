@@ -433,6 +433,34 @@ app.get("/events", (req, res) => {
   });
 });
 
+app.get("/allEvents", (req, res) => {
+  const sql = `
+    SELECT 
+      D.NAZIV,
+      TO_CHAR(D.VRIJEME, 'DD FMMonth, YYYY HH24:MI') as VRIJEME,
+      D.OPIS,
+      D.ULICA|| ', ' || M.NAZIV AS ADRESA,
+      D.LATITUDE,        
+      D.LONGITUDE,
+	  K.IME || ' ' || K.PREZIME AS KORISNIK
+    FROM 
+      DOGADAJI D
+    LEFT JOIN 
+      MJESTA M ON D.MJESTO_ID = M.MJESTO_ID
+	LEFT JOIN
+	  KORISNICI_ROLE K ON D.KORISNIK_ID = K.KORISNIK_ID
+  `;
+  client.query(sql, [], (error, result) => {
+    if (error) {
+      console.error("Error fetching data: ", error);
+      return res.status(500).send("Error fetching data");
+    }
+
+    console.log(result.rows);
+    res.json(result.rows);
+  });
+});
+
 app.listen(5000, () => {
   console.log("Server is running on port 5000");
 });
