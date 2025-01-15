@@ -1,6 +1,7 @@
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import eventImage from "../../assets/event.jpg";
 
 function EventList({ events }) {
   function SampleNextArrow(props) {
@@ -48,9 +49,14 @@ function EventList({ events }) {
           {events?.map((event, index) => (
             <div key={index} className="eventCard">
               <div className="event-card-header">
+                <img src={eventImage} alt="" />
                 <h4>{event.naziv}</h4>
               </div>
               <div className="event-card-details">
+                <br />
+                <p>
+                  <strong>Description:</strong> {event.opis}
+                </p>
                 <p>
                   <strong>Time:</strong> {event.vrijeme}
                 </p>
@@ -63,7 +69,9 @@ function EventList({ events }) {
                   <strong>Location:</strong> {event.adresa}
                 </p>
                 <br />
-                <button className="event-btn">View Details</button>
+                <a href="/myEvents">
+                  <button className="event-btn">View Details</button>
+                </a>
               </div>
             </div>
           ))}

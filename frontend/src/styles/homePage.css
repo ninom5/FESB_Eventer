@@ -119,28 +119,31 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  padding-bottom: 50px;
 }
 
 .upcomingEvents-container {
   width: 80%;
   margin: 0 auto;
   padding: 20px 0;
-  height: 500px;
+  height: 550px;
 }
 
 .eventCard {
   width: 280px;
-  height: 320px;
+  height: 520px;
   padding: 20px;
   background-color: #fff;
   border-radius: 8px;
   border: 1px solid #ddd;
   box-sizing: border-box;
   margin: 0 auto;
-}
-
-.slick-slide > div {
-  margin: 0 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: 0.4s;
+  overflow: hidden;
+  overflow-y: auto;
 }
 
 .event-card-header {
@@ -150,23 +153,33 @@
   color: #333;
   border-bottom: 1px solid #ddd;
   padding-bottom: 10px;
+  flex: 1;
+}
+
+.event-card-header img {
+  width: 100%;
+  height: 110px;
+  object-fit: cover;
 }
 
 .event-card-details {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: flex-start;
+  justify-content: space-between;
+  flex: 2;
 }
+
 .event-card-details div {
   display: flex;
   flex-direction: column;
 }
-.eventCard:hover {
-  transform: translateY(+5px);
-  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15), 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease-in-out;
+
+.event-card-details p {
+  margin: 8px 0;
+  white-space: normal;
+  word-wrap: break-word;
 }
+
 .event-btn {
   align-self: center;
   width: 100px;
@@ -176,9 +189,32 @@
   border: none;
   cursor: pointer;
   transition: 0.7s;
+  position: absolute;
+  bottom: 25px;
 }
+
 .event-btn:hover {
   background-color: black;
   color: lightgray;
   transition: 0.7s;
+}
+
+.eventCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15), 0 4px 6px rgba(0, 0, 0, 0.1);
+  /* transition: all 0.5s ease-in-out; */
+  transition: 0.7s;
+  border: 1px solid black;
+}
+
+.slick-list {
+  height: 550px;
+  padding-top: 20px !important;
+}
+
+.slick-slider.slick-initialized {
+  height: 550px;
+}
+.slick-slide > div {
+  margin: 0 10px;
 }

@@ -456,7 +456,7 @@ app.get("/allEvents", (req, res) => {
       return res.status(500).send("Error fetching data");
     }
 
-    console.log(result.rows);
+    // console.log(result.rows);
     res.json(result.rows);
   });
 });
