@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap");
+
 .eventsPage {
   margin: 0;
   padding: 0;
@@ -5,25 +7,28 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  gap: 2vh;
   align-items: center;
   width: 100%;
-  background-color: #f9f9f9;
+  background-color: black;
 }
 
 .addEventButton {
   height: 2.5rem;
   width: 8rem;
-  background-color: lightgray;
-  color: black;
-  border: none;
+  background-color: rgb(27, 27, 27);
+  color: rgb(139, 139, 139);
   border-radius: 8px;
+  border: none;
   cursor: pointer;
   margin: 1rem 0;
+  transition: background-color 0.5s ease, color 0.5s ease, border 0.5s ease;
 }
 
 .addEventButton:hover {
   background-color: black;
-  color: lightgray;
+  color: white;
+  border: 1px groove gray;
 }
 
 .eventsPage-buttons {
@@ -31,7 +36,7 @@
   gap: 30px;
 }
 
-.newEventForm {
+/* .newEventForm {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -41,9 +46,34 @@
   background-color: #ffffff;
   width: 90%;
   max-width: 25vw;
-  height: 70vh;
+  height: 40vh;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   margin-top: 20px;
+  transition: all 1s ease;
+} */
+
+.newEventForm {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  border-radius: 8px;
+  padding: 1em;
+  background-color: #ffffff;
+  width: 40%;
+  max-width: 25vw;
+  height: 40vh;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  margin-top: 20px;
+  opacity: 1;
+  transition: all 1.5s ease;
+}
+
+.newEventForm.hidden {
+  opacity: 0;
+  width: 0;
+  padding: 0;
+  pointer-events: none;
 }
 
 .newEventForm input,
@@ -66,7 +96,7 @@
   padding: 12px;
   padding-right: 50px;
   box-sizing: border-box;
-  min-height: 12vh;
+  min-height: 6vh;
   font-size: 0.8em;
   resize: none;
 }
@@ -117,4 +147,207 @@ textarea::-webkit-scrollbar-thumb {
 .newEventForm button:hover {
   background-color: black;
   color: lightgray;
+}
+
+.event-container {
+  display: flex;
+  justify-content: space-between;
+  width: 80vw;
+  height: 30vh;
+  opacity: 1;
+  transition: all 1s ease;
+}
+
+.event-container.hidden {
+  height: 0;
+  opacity: 0;
+}
+.event {
+  display: flex;
+  gap: 1vw;
+  padding: 1em;
+  width: 50vw;
+  height: 100%;
+  border-radius: 6px;
+  border: 1px solid rgba(33, 33, 33, 0.934);
+  background-color: rgba(16, 16, 16, 0.934);
+  transition: width 1s ease, height 1s ease;
+}
+
+.event img {
+  width: auto;
+  height: 100%;
+}
+
+.event-details {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 100%;
+  height: 100%;
+}
+
+.event-title {
+  display: flex;
+  justify-content: space-between;
+}
+
+.event-title p {
+  font-family: "Roboto", sans-serif;
+  font-weight: 400;
+  font-size: 2em;
+  text-transform: uppercase;
+  font-weight: bold;
+  color: white;
+}
+
+.event-title h3 {
+  font-family: "Roboto", sans-serif;
+  font-weight: 400;
+  font-size: 1.5em;
+  font-weight: bold;
+  color: rgb(126, 126, 126);
+}
+
+.event-desc {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 100%;
+  margin-top: 2vh;
+  padding-bottom: 2vh;
+}
+
+.event-desc-details {
+  display: flex;
+  flex-direction: column;
+  width: 50%;
+  height: 100%;
+  justify-content: space-between;
+  align-items: end;
+}
+
+.event-desc-details p {
+  font-family: "Roboto", sans-serif;
+  font-size: 1em;
+  height: 50%;
+  width: 100%;
+  font-weight: bold;
+  color: white;
+}
+.attend-button {
+  height: 2em;
+  width: 7vw;
+  background-color: rgb(36, 36, 36);
+  color: gray;
+  border: 1px solid rgb(88, 88, 88);
+  cursor: pointer;
+  margin: 1rem 0;
+  transition: background-color 0.5s ease, color 0.5s ease, border 0.5s ease;
+}
+
+.attend-button:hover {
+  background-color: transparent;
+  color: white;
+  border: 1px groove gray;
+}
+.event-footer {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 1vh;
+  border-top: 1px groove rgba(255, 255, 255, 0.281);
+}
+
+.event-footer p {
+  font-family: "Roboto", sans-serif;
+  font-weight: 300;
+  font-weight: bold;
+  color: rgb(236, 236, 236);
+}
+
+.event-status {
+  display: flex;
+  width: 5vw;
+  height: 3vh;
+  justify-content: center;
+  align-items: center;
+  border-radius: 8px;
+}
+
+.organiser {
+  display: flex;
+  align-items: start;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 1em;
+  width: 28vw;
+  height: 100%;
+  border-radius: 6px;
+  border: 1px solid rgba(33, 33, 33, 0.934);
+  background-color: rgba(16, 16, 16, 0.934);
+}
+
+.organiser img {
+  width: 6vw;
+  height: auto;
+  border-radius: 8px;
+}
+
+.organiser-details {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  height: 40%;
+}
+
+.organiser-details p {
+  font-family: "Roboto", sans-serif;
+  font-weight: 300;
+  font-size: 1.5em;
+  font-weight: bold;
+  color: rgb(236, 236, 236);
+  text-align: end;
+}
+
+.upcoming-event {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 0.4em;
+  align-items: center;
+  border: 1px solid rgb(30, 30, 30);
+  border-radius: 6px;
+  width: 100%;
+  height: 12vh;
+  background-color: transparent;
+  transition: background-color 0.5s ease;
+}
+
+.upcoming-event:hover {
+  background-color: rgb(39, 39, 39);
+}
+.upcoming-event p {
+  font-family: "Roboto", sans-serif;
+  font-weight: 300;
+  font-size: 1.2em;
+  font-weight: bold;
+  color: rgb(236, 236, 236);
+  text-align: end;
+}
+
+.upcoming-text {
+  text-transform: uppercase;
+  color: #0000;
+  font-family: sans-serif;
+  font-size: 1.2em;
+  font-weight: bold;
+  background: repeating-conic-gradient(#000 0 0.00001%, #767676 0 0.0001%) 30%
+    10%/2500px 100px;
+  background-blend-mode: difference;
+  mix-blend-mode: lighten;
+  -webkit-background-clip: text;
+  background-clip: text;
 }

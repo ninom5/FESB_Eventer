@@ -3,8 +3,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import headerLogo from "../assets/headerLogo.jpg";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 function Header() {
+  const navigate = useNavigate();
   const [searchValue, setSearchValue] = useState("");
   const [results, setResults] = useState({
     events: [],
@@ -53,9 +55,13 @@ function Header() {
       </div>
       <div className="search-bar-container" ref={searchContainerRef}>
         <div>
-          <FontAwesomeIcon icon={faSearch} />
+          <FontAwesomeIcon icon={faSearch} color="white" />
           <input
-            onChange={(e) => setSearchValue(e.target.value)}
+            className="search-input"
+            onChange={(e) => {
+              setSearchValue(e.target.value);
+              handleSearch();
+            }}
             onKeyDown={(e) => {
               if (e.key === "Enter") handleSearch();
             }}
@@ -73,8 +79,15 @@ function Header() {
                 <h4>Events</h4>
                 <ul>
                   {results.events.map((event) => (
-                    <li key={event.id} className="result-item">
-                      {event.ime}, {event.naziv} - {event.adresa}
+                    <li
+                      key={event.id}
+                      className="result-item"
+                      onClick={() => {
+                        navigate("/events", { state: event });
+                        setShowResults(false);
+                      }}
+                    >
+                      {event.korisnik}, {event.naziv} - {event.adresa}
                     </li>
                   ))}
                 </ul>
@@ -86,7 +99,7 @@ function Header() {
                 <ul>
                   {results.users.map((user) => (
                     <li key={user.id} className="result-item">
-                      {user.ime} {user.prezime}
+                      {user.naziv}
                     </li>
                   ))}
                 </ul>

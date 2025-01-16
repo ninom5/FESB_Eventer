@@ -4,11 +4,13 @@ import UserList from "../components/HomePage/UserList";
 import EventList from "../components/HomePage/EventList";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 function HomePage() {
   const [mostActiveUsers, setMostActiveUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(0);
   const [events, setAllEvents] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -25,8 +27,9 @@ function HomePage() {
       }
 
       try {
-        const eventRes = await axios.get(
-          "http://localhost:5000/upComingEvents"
+        const eventRes = await axios.post(
+          "http://localhost:5000/upComingEvents",
+          { email: email }
         );
         console.log(eventRes.data);
         setAllEvents(eventRes.data);
@@ -41,13 +44,14 @@ function HomePage() {
   return (
     <div className="homePage">
       <Header />
-      <UserList
-        mostActiveUsers={mostActiveUsers}
-        selectedUser={selectedUser}
-        setSelectedUser={setSelectedUser}
-      />
-
-      <EventList events={events} />
+      <div className="homeContainer">
+        <UserList
+          mostActiveUsers={mostActiveUsers}
+          selectedUser={selectedUser}
+          setSelectedUser={setSelectedUser}
+        />
+        <EventList events={events} navigate={navigate} />
+      </div>
       <Footer />
     </div>
   );
