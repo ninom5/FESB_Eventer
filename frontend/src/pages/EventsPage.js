@@ -7,10 +7,27 @@ import EventForm from "../components/EventsPage/EventForm";
 import AddEventButton from "../components/EventsPage/AddEventButton";
 import SeeMyEventsButton from "../components/EventsPage/SeeMyEventsButton";
 import RefreshEventsButton from "../components/EventsPage/RefreshEvents";
+import { Event } from "../components/EventsPage/Event";
+import { faCirclePlus, faTimes } from "@fortawesome/free-solid-svg-icons";
+import { useLocation } from "react-router-dom";
+import Loader from "../components/Loader";
 
 function EventsPage() {
+  const location = useLocation();
   const [showForm, setShowForm] = useState(false);
   const [buttonText, setButtonText] = useState("Add event");
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (location?.state) {
+      setSelectedEvent(location.state);
+      setCenter({
+        lat: parseFloat(location.state.latitude),
+        lng: parseFloat(location.state.longitude),
+      });
+      setZoom(15);
+    }
+  }, [location?.state]);
 
   const [eventData, setEventData] = useState({
     eventName: "",
@@ -25,12 +42,11 @@ function EventsPage() {
   });
   const [events, setEvents] = useState([]);
   const [charCount, setCharCount] = useState(0);
+  const [icon, setIcon] = useState(faCirclePlus);
+  const [selectedEvent, setSelectedEvent] = useState(location?.state ?? null);
 
   useEffect(() => {
-    const interval = setInterval(() => {
     getEvents();
-    }, 10);
-
 
     const email = localStorage.getItem("email");
     axios
@@ -45,26 +61,32 @@ function EventsPage() {
       .catch((error) => {
         console.error("Error fetching user ID:", error);
       });
-
-    return () => clearInterval(interval);
   }, []);
 
-  const getEvents = async() => {
+  const getEvents = async () => {
+    setLoading(true);
     try {
-      const resEvents = await axios.get('http://localhost:5000/allEvents');
+      const email = localStorage.getItem("email");
+      const resEvents = await axios.post("http://localhost:5000/allEvents", {
+        email: email,
+      });
 
-      setEvents(resEvents.data);
-
-    } catch(err) {
+      setTimeout(() => {
+        setEvents(resEvents.data);
+        setLoading(false);
+      }, 1000);
+    } catch (err) {
       console.log(err);
     }
-  }
+  };
 
   const handleButtonClick = () => {
+    setSelectedEvent(null);
     setShowForm((prev) => !prev);
     setButtonText((prevText) =>
       prevText === "Add event" ? "Cancel" : "Add event"
     );
+    setIcon((prev) => (prev === faCirclePlus ? faTimes : faCirclePlus));
   };
 
   const handleInputChange = (e) => {
@@ -151,6 +173,13 @@ function EventsPage() {
   return (
     <div className="eventsPage">
       <Header />
+      <Event
+        event={selectedEvent}
+        setEvent={setSelectedEvent}
+        events={events}
+        getEvents={getEvents}
+        showForm={showForm}
+      />
       <div
         style={{
           display: "flex",
@@ -158,28 +187,30 @@ function EventsPage() {
           width: "80vw",
         }}
       >
-        {showForm && (
-          <EventForm
-            setEventData={setEventData}
-            eventData={eventData}
-            getEvents={getEvents}
-            handleInputChange={handleInputChange}
-            setAutocomplete={setAutocomplete}
-            handlePlaceChanged={handlePlaceChanged}
-            eventLocation={eventLocation}
-            setEventLocation={setEventLocation}
-            charCount={charCount}
-            setShowForm={setShowForm}
-            setButtonText={setButtonText}
-            setCharCount={setCharCount}
-          />
-        )}
+        <EventForm
+          setEventData={setEventData}
+          eventData={eventData}
+          getEvents={getEvents}
+          handleInputChange={handleInputChange}
+          setAutocomplete={setAutocomplete}
+          handlePlaceChanged={handlePlaceChanged}
+          eventLocation={eventLocation}
+          setEventLocation={setEventLocation}
+          charCount={charCount}
+          showForm={showForm}
+          setShowForm={setShowForm}
+          setButtonText={setButtonText}
+          setCharCount={setCharCount}
+          mapRef={mapRef}
+        />
         <Map
           style={{
             width: showForm ? "60%" : "100%",
-            height: "70vh",
+            height: "40vh",
             transition: "width 1s ease",
             marginTop: "20px",
+            borderRadius: "6px",
+            opacity: "0.6",
           }}
           markerPosition={markerPosition}
           mapRef={mapRef}
@@ -189,17 +220,21 @@ function EventsPage() {
           showForm={showForm}
           zoom={zoom}
           setZoom={setZoom}
+          selectedEvent={selectedEvent}
+          setSelectedEvent={setSelectedEvent}
         />
       </div>
       <div className="eventsPage-buttons">
         <AddEventButton
           handleButtonClick={handleButtonClick}
           buttonText={buttonText}
+          icon={icon}
         />
         <SeeMyEventsButton />
-        <RefreshEventsButton handleButtonClick={getEvents}/>
+        <RefreshEventsButton handleButtonClick={getEvents} />
       </div>
       <Footer />
+      <Loader loading={loading} />
     </div>
   );
 }

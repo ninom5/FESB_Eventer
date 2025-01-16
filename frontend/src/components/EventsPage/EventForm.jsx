@@ -10,10 +10,12 @@ function EventForm({
   handlePlaceChanged,
   eventLocation,
   setEventLocation,
+  showForm,
   setShowForm,
   setButtonText,
   charCount,
   setCharCount,
+  mapRef,
 }) {
   const maxLength = 1000;
 
@@ -62,7 +64,10 @@ function EventForm({
   };
 
   return (
-    <form className="newEventForm" onSubmit={handleSubmit}>
+    <form
+      className={`newEventForm ${showForm ? "" : "hidden"}`}
+      onSubmit={handleSubmit}
+    >
       <label>
         Event name:
         <input
@@ -73,41 +78,51 @@ function EventForm({
           required
         />
       </label>
-      <label>
-        Date:
-        <input
-          type="date"
-          name="date"
-          value={eventData.date}
-          onChange={handleInputChange}
-          required
-        />
-      </label>
-      <label>
-        Time:
-        <input
-          type="time"
-          name="startTime"
-          value={eventData.startTime}
-          onChange={handleInputChange}
-          required
-        />
-      </label>
-      <label>
-        Location:
-        <Autocomplete
-          onLoad={handleAutocompleteLoad}
-          options={{ componentRestrictions: { country: "HR" } }}
-          onPlaceChanged={handlePlaceChanged}
-        >
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          width: "100%",
+        }}
+      >
+        <label style={{ width: "45%" }}>
+          Date:
           <input
-            type="text"
-            name="street"
-            value={eventLocation}
-            onChange={(e) => setEventLocation(e.target.value)}
+            type="date"
+            name="date"
+            value={eventData.date}
+            onChange={handleInputChange}
             required
           />
-        </Autocomplete>
+        </label>
+        <label style={{ width: "45%" }}>
+          Time:
+          <input
+            type="time"
+            name="startTime"
+            value={eventData.startTime}
+            onChange={handleInputChange}
+            required
+          />
+        </label>
+      </div>
+      <label>
+        Location:
+        {showForm && (
+          <Autocomplete
+            onLoad={handleAutocompleteLoad}
+            options={{ componentRestrictions: { country: "HR" } }}
+            onPlaceChanged={handlePlaceChanged}
+          >
+            <input
+              type="text"
+              name="street"
+              value={eventLocation}
+              onChange={(e) => setEventLocation(e.target.value)}
+              required
+            />
+          </Autocomplete>
+        )}
       </label>
       <label>
         Description:

@@ -2,8 +2,8 @@ import noUserPicture from "../../assets/noPlayerIcon.svg";
 
 function UserList({ mostActiveUsers, selectedUser, setSelectedUser }) {
   return (
-    <div className="homeContainer">
-      <h3>Most active users</h3>
+    <div className="user-list">
+      <h3 style={{ color: "white" }}>Most active users</h3>
       <div className="homeUsers">
         {mostActiveUsers?.map((item, index) => {
           return (

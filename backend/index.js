@@ -186,13 +186,14 @@ app.post("/createEvent", async (req, res) => {
         vrijeme,
         opis,
         korisnik_id,
+        status_id,
         mjesto_id,
         ulica,
         longitude,
         latitude,
         created_by
       )
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+      VALUES ($1, $2, $3, $4, 1, $5, $6, $7, $8, $9)
     `;
 
     const eventValues = [
@@ -312,24 +313,36 @@ app.post("/search", async (req, res) => {
     req.body.searchValue.trim() !== "" ? `%${req.body.searchValue}%` : "%";
 
   const sqlUsers = `
-    SELECT KR.IME, KR.PREZIME, 
+    SELECT TRIM(KR.IME) || ' ' || TRIM(KR.PREZIME) as NAZIV, 
            CASE 
              WHEN KR.TKORISNIKA = 'Kreator' THEN M.NAZIV || ', ' || KR.ULICA 
              ELSE NULL 
            END AS ADRESA
     FROM KORISNICI_ROLE KR
     LEFT JOIN MJESTA M ON M.MJESTO_ID = KR.MJESTO_ID
-    WHERE KR.IME ILIKE $1 OR KR.PREZIME ILIKE $1
+    WHERE (TRIM(KR.IME) || ' ' || TRIM(KR.PREZIME)) ILIKE $1
   `;
 
   const sqlEvents = `
-    SELECT KR.IME || ' ' || KR.PREZIME AS IME,
-           D.NAZIV,
-           M.NAZIV || ', ' || D.ULICA AS ADRESA
+    SELECT  D.DOGADAJ_ID,
+      D.NAZIV,
+      TO_CHAR(D.VRIJEME, 'DD FMMonth, YYYY HH24:MI') as VRIJEME,
+      D.BROJ_POSJETITELJA,
+      D.OPIS,
+      D.ULICA|| ', ' || M.NAZIV AS ADRESA,
+      D.LATITUDE,        
+      D.LONGITUDE,
+      D.KORISNIK_ID,
+	    K.IME || ' ' || K.PREZIME AS KORISNIK,
+      K.ULICA|| ', ' || M1.NAZIV AS ADRESA_KORISNIKA,
+      S.NAZIV AS STATUS
     FROM DOGADAJI D
     LEFT JOIN KORISNICI_ROLE KR ON KR.KORISNIK_ID = D.KORISNIK_ID
     LEFT JOIN MJESTA M ON M.MJESTO_ID = D.MJESTO_ID
-    WHERE D.NAZIV ILIKE $1 OR IME ILIKE $1
+    LEFT JOIN STATUSI S ON D.STATUS_ID = S.STATUS_ID
+    LEFT JOIN KORISNICI_ROLE K ON D.KORISNIK_ID = K.KORISNIK_ID
+    LEFT JOIN MJESTA M1 ON M1.MJESTO_ID = K.MJESTO_ID
+    WHERE D.NAZIV ILIKE $1 OR (K.IME || ' ' || K.PREZIME) ILIKE $1
   `;
 
   try {
@@ -433,63 +446,159 @@ app.get("/events", (req, res) => {
   });
 });
 
-app.get("/allEvents", (req, res) => {
-  const sql = `
+app.post("/allEvents", async (req, res) => {
+  const email = req.body.email;
+
+  try {
+    const sqlUserId = "SELECT KORISNIK_ID FROM KORISNICI_ROLE WHERE EMAIL = $1";
+    const resUserId = await client.query(sqlUserId, [email]);
+
+    if (resUserId.rows.length === 0) {
+      return res.status(404).send("User not found");
+    }
+
+    const korisnik_id = resUserId.rows[0].korisnik_id;
+
+    const sql = `
     SELECT 
+      D.DOGADAJ_ID,
       D.NAZIV,
       TO_CHAR(D.VRIJEME, 'DD FMMonth, YYYY HH24:MI') as VRIJEME,
+      D.BROJ_POSJETITELJA,
       D.OPIS,
       D.ULICA|| ', ' || M.NAZIV AS ADRESA,
       D.LATITUDE,        
       D.LONGITUDE,
-	  K.IME || ' ' || K.PREZIME AS KORISNIK
+      D.KORISNIK_ID,
+	    K.IME || ' ' || K.PREZIME AS KORISNIK,
+      K.ULICA|| ', ' || M1.NAZIV AS ADRESA_KORISNIKA,
+      S.NAZIV AS STATUS,
+	  CASE 
+        WHEN VKD.VKD_ID IS NULL THEN false
+        ELSE true
+    END AS DOLAZI
     FROM 
       DOGADAJI D
     LEFT JOIN 
       MJESTA M ON D.MJESTO_ID = M.MJESTO_ID
-	LEFT JOIN
-	  KORISNICI_ROLE K ON D.KORISNIK_ID = K.KORISNIK_ID
+	  LEFT JOIN
+	    KORISNICI_ROLE K ON D.KORISNIK_ID = K.KORISNIK_ID
+    LEFT JOIN
+      MJESTA M1 ON K.MJESTO_ID = M1.MJESTO_ID
+    LEFT JOIN
+      STATUSI S ON D.STATUS_ID = S.STATUS_ID
+	  LEFT JOIN 
+	  VEZE_KORISNICI_DOGADAJI VKD ON VKD.KORISNIK_ID = $1 AND VKD.DOGADAJ_ID = D.DOGADAJ_ID
+	  WHERE VRIJEME > CURRENT_TIMESTAMP
+	  ORDER BY VRIJEME DESC
   `;
-  client.query(sql, [], (error, result) => {
-    if (error) {
-      console.error("Error fetching data: ", error);
-      return res.status(500).send("Error fetching data");
-    }
+    const resSelect = await client.query(sql, [korisnik_id]);
 
-    // console.log(result.rows);
-    res.json(result.rows);
-  });
+    res.json(resSelect.rows);
+  } catch (err) {
+    console.log(err);
+  }
 });
 
-app.get("/upComingEvents", (req, res) => {
-  const sql = `
+app.post("/upComingEvents", async (req, res) => {
+  const email = req.body.email;
+
+  try {
+    const sqlUserId = "SELECT KORISNIK_ID FROM KORISNICI_ROLE WHERE EMAIL = $1";
+    const resUserId = await client.query(sqlUserId, [email]);
+
+    if (resUserId.rows.length === 0) {
+      return res.status(404).send("User not found");
+    }
+
+    const korisnik_id = resUserId.rows[0].korisnik_id;
+
+    const sql = `
     SELECT 
+      D.DOGADAJ_ID,
       D.NAZIV,
       TO_CHAR(D.VRIJEME, 'DD FMMonth, YYYY HH24:MI') as VRIJEME,
+      D.BROJ_POSJETITELJA,
       D.OPIS,
       D.ULICA|| ', ' || M.NAZIV AS ADRESA,
       D.LATITUDE,        
       D.LONGITUDE,
-	  K.IME || ' ' || K.PREZIME AS KORISNIK
+      D.KORISNIK_ID,
+	    K.IME || ' ' || K.PREZIME AS KORISNIK,
+      K.ULICA|| ', ' || M1.NAZIV AS ADRESA_KORISNIKA,
+      S.NAZIV AS STATUS,
+	  CASE 
+        WHEN VKD.VKD_ID IS NULL THEN false
+        ELSE true
+    END AS DOLAZI
     FROM 
       DOGADAJI D
     LEFT JOIN 
       MJESTA M ON D.MJESTO_ID = M.MJESTO_ID
-	LEFT JOIN
-	  KORISNICI_ROLE K ON D.KORISNIK_ID = K.KORISNIK_ID
-  ORDER BY 
-    D.VRIJEME ASC
-  LIMIT 15;
+	  LEFT JOIN
+	    KORISNICI_ROLE K ON D.KORISNIK_ID = K.KORISNIK_ID
+    LEFT JOIN
+      MJESTA M1 ON K.MJESTO_ID = M1.MJESTO_ID
+    LEFT JOIN
+      STATUSI S ON D.STATUS_ID = S.STATUS_ID
+	  LEFT JOIN 
+	  VEZE_KORISNICI_DOGADAJI VKD ON VKD.KORISNIK_ID = $1 AND VKD.DOGADAJ_ID = D.DOGADAJ_ID
+	  WHERE VRIJEME > CURRENT_TIMESTAMP
+	  ORDER BY VRIJEME ASC
+    LIMIT 15
   `;
-  client.query(sql, [], (error, result) => {
-    if (error) {
-      console.error("Error fetching data: ", error);
-      return res.status(500).send("Error fetching data");
+    const resSelect = await client.query(sql, [korisnik_id]);
+
+    res.json(resSelect.rows);
+  } catch (err) {
+    console.log(err);
+  }
+});
+
+app.post("/confirmAttendee", async (req, res) => {
+  const { email, dogadaj_id } = req.body;
+
+  try {
+    const sqlUserId = "SELECT KORISNIK_ID FROM KORISNICI_ROLE WHERE EMAIL = $1";
+    const result = await client.query(sqlUserId, [email]);
+
+    if (result.rows.length === 0) {
+      return res.status(404).send("User not found");
     }
 
-    // console.log(result.rows);
-    res.json(result.rows);
-  });
+    const korisnik_id = result.rows[0].korisnik_id;
+
+    const sql = `INSERT INTO VEZE_KORISNICI_DOGADAJI(KORISNIK_ID, DOGADAJ_ID) VALUES($1, $2)`;
+    await client.query(sql, [korisnik_id, dogadaj_id]);
+
+    res.status(200).send("Attendance confirmed");
+  } catch (error) {
+    console.error("Error during query execution:", error);
+    res.status(500).send("Error processing request");
+  }
+});
+
+app.post("/removeAttendee", async (req, res) => {
+  const { email, dogadaj_id } = req.body;
+
+  try {
+    const sqlUserId = "SELECT KORISNIK_ID FROM KORISNICI_ROLE WHERE EMAIL = $1";
+    const result = await client.query(sqlUserId, [email]);
+
+    if (result.rows.length === 0) {
+      return res.status(404).send("User not found");
+    }
+
+    const korisnik_id = result.rows[0].korisnik_id;
+
+    const sql = `DELETE FROM VEZE_KORISNICI_DOGADAJI WHERE KORISNIK_ID = $1 AND DOGADAJ_ID = $2`;
+    await client.query(sql, [korisnik_id, dogadaj_id]);
+
+    res.status(200).send("Attendance deleted");
+  } catch (error) {
+    console.error("Error during query execution:", error);
+    res.status(500).send("Error processing request");
+  }
 });
 
 app.put("/updateEvent", (req, res) => {
