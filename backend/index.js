@@ -492,6 +492,33 @@ app.get("/upComingEvents", (req, res) => {
   });
 });
 
+app.put("/updateEvent", (req, res) => {
+  const { dogadaj_id, naziv, opis, ulica, vrijeme, organizer } = req.body;
+
+  if (!dogadaj_id || !organizer || !naziv || !opis || !ulica || !vrijeme)
+    return res.json({ message: "Missing required fields" });
+
+  const sql = `
+    UPDATE events
+    SET naziv = $1, opis = $2, ulica = $3, korisnik_id = $4, vrijeme = $5
+    WHERE id = $6
+  `;
+
+  client.query(
+    sql,
+    [naziv, opis, ulica, organizer, vrijeme, dogadaj_id],
+    (err, res) => {
+      if (err) {
+        console.error("Error updating data: ", err);
+        return res.send("Error fetching data");
+      }
+
+      if (res.rowCount > 0) return res.json("Event updated successfully");
+      else return res.json("Event not found");
+    }
+  );
+});
+
 app.listen(5000, () => {
   console.log("Server is running on port 5000");
 });

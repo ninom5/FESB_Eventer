@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import Map from "../Map";
+import axios from "axios";
 
 function formatDateTime(timestamp) {
   const dateObj = new Date(timestamp);
@@ -42,6 +43,9 @@ function EventCard({ event }) {
   const { naziv, vrijeme, opis, ulica, latitude, longitude, date, organizer } =
     event;
 
+  const [isEditing, setIsEditing] = useState(false);
+  const [updatedEvent, setUpdatedEvent] = useState(event);
+
   const mapRef = React.useRef(null);
 
   const lat = parseFloat(latitude);
@@ -52,50 +56,125 @@ function EventCard({ event }) {
 
   const countdownText = getCountdownString(vrijeme);
 
+  const updateData = async () => {
+    try {
+      const res = await axios.put("http://localhost:5000/updateEvent", updatedEvent);
+      alert("event successfully updated")
+    } catch (error) {
+      alert("Error updating event: " + error);
+    }
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setUpdatedEvent((prevEvent) => ({
+      ...prevEvent,
+      [name]: value,
+    }));
+  };
+
+  const handleEditClick = () => {
+    setIsEditing((prevState) => !prevState);
+  };
+
+  const handleSave = () => {
+    setIsEditing(false);
+    updateData();
+  };
   return (
     <div className="event-card">
-      <div className="event-header">
-        <h3>{naziv}</h3>
-        {date ? (
-          <span className="event-date">{date}</span>
+    <div className="event-header">
+      <h3>{updatedEvent.naziv}</h3>
+      {date ? (
+        <span className="event-date">{date}</span>
+      ) : (
+        <span className="event-date">{dateString}</span>
+      )}
+    </div>
+
+    <div className="event-body">
+      <p className="time-text">
+        <strong>Time:</strong> {timeString}
+      </p>
+
+      <div className="event-description">
+        {isEditing ? (
+          <textarea
+            name="opis"
+            value={updatedEvent.opis}
+            onChange={handleInputChange}
+          />
         ) : (
-          <span className="event-date">{dateString}</span>
+          <p>{updatedEvent.opis}</p>
         )}
       </div>
 
-      <div className="event-body">
-        <p className="time-text">
-          <strong>Time:</strong> {timeString}
-        </p>
-
-        <div className="event-description">{opis}</div>
-
-        {organizer && (
-          <p className="event-organizer">
-            <strong>Organizer:</strong> {organizer}
-          </p>
-        )}
-
-        <p className="event-location">
-          <strong>Address:</strong> {ulica}
-        </p>
-
-        <p className="countdown-text">{countdownText}</p>
-
-        {isLatLngValid ? (
-          <div className="map-container">
-            <Map
-              style={{ width: "100%", height: "100%" }}
-              center={{ lat, lng }}
-              markerPosition={{ lat, lng }}
-              showForm={true}
-              zoom={15}
-              mapRef={mapRef}
+      {organizer && (
+        <p className="event-organizer">
+          <strong>Organizer:</strong>{" "}
+          {isEditing ? (
+            <input
+              type="text"
+              name="organizer"
+              value={updatedEvent.organizer}
+              onChange={handleInputChange}
             />
-          </div>
+          ) : (
+            updatedEvent.organizer
+          )}
+        </p>
+      )}
+
+      <p className="event-location">
+        <strong>Address:</strong>{" "}
+        {isEditing ? (
+          <input
+            type="text"
+            name="ulica"
+            value={updatedEvent.ulica}
+            onChange={handleInputChange}
+          />
         ) : (
-          <p className="no-coords">No valid coordinates available.</p>
+          updatedEvent.ulica
         )}
+      </p>
+
+      <p className="countdown-text">{countdownText}</p>
+
+      {isLatLngValid ? (
+        <div className="map-container">
+          <Map
+            style={{ width: "100%", height: "100%" }}
+            center={{ lat, lng }}
+            markerPosition={{ lat, lng }}
+            showForm={true}
+            zoom={15}
+            mapRef={mapRef}
+          />
+        </div>
+      ) : (
+        <p className="no-coords">No valid coordinates available.</p>
+      )}
+
+        <div className="btn-div">
+          {isEditing ? (
+            <>
+              <button className="save-event-btn" onClick={handleSave}>
+                Save Changes
+              </button>
+              <button className="cancel-event-btn" onClick={handleEditClick}>
+                Cancel
+              </button>
+            </>
+          ) : (
+            <button
+              className="edit-event-btn"
+              onClick={handleEditClick}
+            >
+              Edit event
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );
