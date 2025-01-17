@@ -601,31 +601,69 @@ app.post("/removeAttendee", async (req, res) => {
   }
 });
 
-app.put("/updateEvent", (req, res) => {
-  const { dogadaj_id, naziv, opis, ulica, vrijeme, organizer } = req.body;
+app.post("/updateEvent", async (req, res) => {
+  const { dogadaj_id, opis, ulica, datum, time, naziv } = req.body;
 
-  if (!dogadaj_id || !organizer || !naziv || !opis || !ulica || !vrijeme)
-    return res.json({ message: "Missing required fields" });
+  eventDateTime = new Date(`${datum}T${time}`);
+
+  const currentDate = new Date();
+
+  if (eventDateTime < currentDate) {
+    return res.json({ message: "Date cant be in past" });
+  }
 
   const sql = `
-    UPDATE events
-    SET naziv = $1, opis = $2, ulica = $3, korisnik_id = $4, vrijeme = $5
-    WHERE id = $6
-  `;
-
-  client.query(
-    sql,
-    [naziv, opis, ulica, organizer, vrijeme, dogadaj_id],
-    (err, res) => {
-      if (err) {
-        console.error("Error updating data: ", err);
-        return res.send("Error fetching data");
-      }
-
-      if (res.rowCount > 0) return res.json("Event updated successfully");
-      else return res.json("Event not found");
+      UPDATE dogadaji
+      SET naziv = $1, opis = $2, ulica = $3, vrijeme = $4
+      WHERE dogadaj_id = $5
+    `;
+  try {
+    const result = await client.query(sql, [
+      naziv,
+      opis,
+      ulica,
+      eventDateTime,
+      dogadaj_id,
+    ]);
+    if (result.rowCount > 0) {
+      return res.json({ message: "Event updated successfully" });
+    } else {
+      return res.status(404).json({ message: "Event not found" });
     }
-  );
+  } catch (err) {
+    console.error(err);
+  }
+});
+
+app.get("/getOrganizer", async (req, res) => {
+  const { dogadaj_id } = req.query;
+  const getUserIdSql = "SELECT korisnik_id FROM dogadaji WHERE dogadaj_id = $1";
+  const getUserNameSql =
+    "SELECT ime FROM korisnici_role WHERE korisnik_id = $1";
+
+  let userId;
+
+  try {
+    const result = await client.query(getUserIdSql, [dogadaj_id]);
+
+    if (result.rowCount <= 0)
+      return res.json({ message: "Error getting user id from event" });
+
+    userId = result.rows[0].korisnik_id;
+  } catch (err) {
+    console.error(err);
+  }
+
+  try {
+    const result = await client.query(getUserNameSql, [userId]);
+
+    if (result.rowCount <= 0)
+      return res.json({ message: "Error getting user by id from users" });
+
+    return res.json(result.rows[0].ime);
+  } catch (err) {
+    console.error(err);
+  }
 });
 
 app.listen(5000, () => {

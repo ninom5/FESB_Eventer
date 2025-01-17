@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Map from "../Map";
 import axios from "axios";
+import { Autocomplete } from "@react-google-maps/api";
 
 function formatDateTime(timestamp) {
   const dateObj = new Date(timestamp);
@@ -40,11 +41,11 @@ function getCountdownString(timestamp) {
 }
 
 function EventCard({ event }) {
-  const { naziv, vrijeme, opis, ulica, latitude, longitude, date, organizer } =
-    event;
+  const { naziv, vrijeme, opis, ulica, latitude, longitude, date } = event;
 
   const [isEditing, setIsEditing] = useState(false);
   const [updatedEvent, setUpdatedEvent] = useState(event);
+  const [organizer, setOrganizer] = useState(null);
 
   const mapRef = React.useRef(null);
 
@@ -58,12 +59,31 @@ function EventCard({ event }) {
 
   const updateData = async () => {
     try {
-      const res = await axios.put("http://localhost:5000/updateEvent", updatedEvent);
-      alert("event successfully updated")
+      const res = await axios.post(
+        "http://localhost:5000/updateEvent",
+        updatedEvent
+      );
+
+      alert(res.data.message);
     } catch (error) {
       alert("Error updating event: " + error);
     }
   };
+
+  const getOrganizer = async () => {
+    try {
+      const org = await axios.get("http://localhost:5000/getOrganizer", {
+        params: { dogadaj_id: event.dogadaj_id },
+      });
+      setOrganizer(org.data);
+    } catch (error) {
+      alert("Error getting organizer: " + error);
+    }
+  };
+
+  useEffect(() => {
+    getOrganizer();
+  }, [event.dogadaj_id]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -77,84 +97,121 @@ function EventCard({ event }) {
     setIsEditing((prevState) => !prevState);
   };
 
+  const currentDate = new Date();
+
   const handleSave = () => {
+    console.log("Updated Event State:", updatedEvent);
+
+    if (!updatedEvent.datum || !updatedEvent.time) {
+      console.log(`Date: ${updatedEvent.datum}, Time: ${updatedEvent.vrijeme}`);
+      alert("Date and time can't be empty.");
+      return;
+    }
+
     setIsEditing(false);
     updateData();
   };
+
   return (
     <div className="event-card">
-    <div className="event-header">
-      <h3>{updatedEvent.naziv}</h3>
-      {date ? (
-        <span className="event-date">{date}</span>
-      ) : (
-        <span className="event-date">{dateString}</span>
-      )}
-    </div>
-
-    <div className="event-body">
-      <p className="time-text">
-        <strong>Time:</strong> {timeString}
-      </p>
-
-      <div className="event-description">
+      <div
+        className="event-header"
+        onClick={() => {
+          setIsEditing(true);
+        }}
+      >
+        <h3>
+          {isEditing ? (
+            <input
+              name="naziv"
+              type="text"
+              onChange={handleInputChange}
+              value={updatedEvent.naziv}
+            />
+          ) : (
+            updatedEvent.naziv
+          )}
+        </h3>
         {isEditing ? (
-          <textarea
-            name="opis"
-            value={updatedEvent.opis}
+          <input
+            name="datum"
+            type="date"
+            value={updatedEvent.datum}
             onChange={handleInputChange}
+            required
           />
+        ) : date ? (
+          <span className="event-date">{date}</span>
         ) : (
-          <p>{updatedEvent.opis}</p>
+          <span className="event-date">{dateString}</span>
         )}
       </div>
 
-      {organizer && (
-        <p className="event-organizer">
-          <strong>Organizer:</strong>{" "}
+      <div className="event-body">
+        <p className="time-text">
+          <strong>Time:</strong>
           {isEditing ? (
             <input
-              type="text"
-              name="organizer"
-              value={updatedEvent.organizer}
+              type="time"
+              name="time"
+              value={updatedEvent.time}
               onChange={handleInputChange}
             />
           ) : (
-            updatedEvent.organizer
+            timeString
           )}
         </p>
-      )}
 
-      <p className="event-location">
-        <strong>Address:</strong>{" "}
-        {isEditing ? (
-          <input
-            type="text"
-            name="ulica"
-            value={updatedEvent.ulica}
-            onChange={handleInputChange}
-          />
-        ) : (
-          updatedEvent.ulica
-        )}
-      </p>
-
-      <p className="countdown-text">{countdownText}</p>
-
-      {isLatLngValid ? (
-        <div className="map-container">
-          <Map
-            style={{ width: "100%", height: "100%" }}
-            center={{ lat, lng }}
-            markerPosition={{ lat, lng }}
-            showForm={true}
-            zoom={15}
-            mapRef={mapRef}
-          />
+        <div className="event-description">
+          {isEditing ? (
+            <textarea
+              name="opis"
+              value={updatedEvent.opis}
+              onChange={handleInputChange}
+            />
+          ) : (
+            <p>{updatedEvent.opis}</p>
+          )}
         </div>
-      ) : (
-        <p className="no-coords">No valid coordinates available.</p>
-      )}
+
+        {organizer && (
+          <p className="event-organizer">
+            <strong>Organizer:</strong> {organizer}
+          </p>
+        )}
+
+        <p className="event-location">
+          <strong>Address:</strong>{" "}
+          {isEditing ? (
+            <Autocomplete>
+              <input
+                type="text"
+                name="ulica"
+                value={updatedEvent.ulica}
+                onChange={handleInputChange}
+              />
+            </Autocomplete>
+          ) : (
+            updatedEvent.ulica
+          )}
+        </p>
+
+        <p className="countdown-text">{countdownText}</p>
+
+        {isLatLngValid ? (
+          <div className="map-container">
+            <Map
+              style={{ width: "100%", height: "100%" }}
+              center={{ lat, lng }}
+              markerPosition={{ lat, lng }}
+              showForm={true}
+              zoom={15}
+              mapRef={mapRef}
+            />
+          </div>
+        ) : (
+          <p className="no-coords">No valid coordinates available.</p>
+        )}
 
         <div className="btn-div">
           {isEditing ? (
@@ -167,10 +224,7 @@ function EventCard({ event }) {
               </button>
             </>
           ) : (
-            <button
-              className="edit-event-btn"
-              onClick={handleEditClick}
-            >
+            <button className="edit-event-btn" onClick={handleEditClick}>
               Edit event
             </button>
           )}
