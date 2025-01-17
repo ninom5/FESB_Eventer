@@ -45,7 +45,7 @@ function EventList({ events, navigate }) {
     autoplay: true,
     autoplaySpeed: 3000,
     dots: true,
-    infinite: false,
+    infinite: true,
     slidesToShow: 5,
     slidesToScroll: 1,
     arrows: true,

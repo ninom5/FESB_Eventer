@@ -512,6 +512,7 @@ app.post("/upComingEvents", async (req, res) => {
     }
 
     const korisnik_id = resUserId.rows[0].korisnik_id;
+    const status = "Uskoro";
 
     const sql = `
     SELECT 
@@ -543,11 +544,13 @@ app.post("/upComingEvents", async (req, res) => {
       STATUSI S ON D.STATUS_ID = S.STATUS_ID
 	  LEFT JOIN 
 	  VEZE_KORISNICI_DOGADAJI VKD ON VKD.KORISNIK_ID = $1 AND VKD.DOGADAJ_ID = D.DOGADAJ_ID
-	  WHERE VRIJEME > CURRENT_TIMESTAMP
+	  WHERE 
+		(S.Naziv = $2) AND
+		VRIJEME > CURRENT_TIMESTAMP
 	  ORDER BY VRIJEME ASC
     LIMIT 15
   `;
-    const resSelect = await client.query(sql, [korisnik_id]);
+    const resSelect = await client.query(sql, [korisnik_id, status]);
 
     res.json(resSelect.rows);
   } catch (err) {
@@ -612,6 +615,10 @@ app.post("/updateEvent", async (req, res) => {
     return res.json({ message: "Date cant be in past" });
   }
 
+  let newStatus_id = status_id;
+
+  if (!status_id) newStatus_id = parseInt("-1", 10);
+
   const sql = `
       UPDATE dogadaji
       SET naziv = $1, opis = $2, ulica = $3, vrijeme = $4, status_id = $5
@@ -623,7 +630,7 @@ app.post("/updateEvent", async (req, res) => {
       opis,
       ulica,
       eventDateTime,
-      status_id,
+      newStatus_id,
       dogadaj_id,
     ]);
     if (result.rowCount > 0) {
