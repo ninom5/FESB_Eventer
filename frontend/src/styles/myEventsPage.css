@@ -1,5 +1,6 @@
 .myEventsPage {
-  background: linear-gradient(135deg, #fafafa 0%, #d4d4d4 100%);
+  /* background: linear-gradient(135deg, #fafafa 0%, #d4d4d4 100%); */
+  background-color: rgba(0, 0, 0, 0.8);
   min-height: 100vh;
 }
 
@@ -15,9 +16,9 @@
 }
 
 .event-card {
-  background-color: #ffffff;
-  width: 30%;
-  border-radius: 6px;
+  background-color: black;
+  width: 40%;
+  border-radius: 12px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
   transition: box-shadow 0.2s ease;
   display: flex;
@@ -26,7 +27,7 @@
 }
 
 .event-card:hover {
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 10px rgba(255, 255, 255, 0.2);
 }
 
 .event-header {
@@ -34,21 +35,22 @@
   justify-content: space-between;
   align-items: center;
   padding: 1rem;
-  background-color: #f7f7f7;
-  border-bottom: 1px solid #eee;
+  background-color: black;
+  border-bottom: 1px solid #333;
+  border-radius: 12px;
 }
 
 .event-header h3 {
   margin: 0;
   font-size: 1.2rem;
-  color: #333;
+  color: white;
 }
 
 .event-date {
-  background-color: #f0f0f0;
+  background-color: #333;
   padding: 0.3rem 0.6rem;
   border-radius: 4px;
-  color: #333;
+  color: white;
   font-size: 0.85rem;
 }
 
@@ -62,7 +64,7 @@
 .event-body p {
   margin: 0.5rem 0;
   line-height: 1.4;
-  color: #555;
+  color: white;
 }
 
 .time-text,
@@ -155,4 +157,49 @@ textarea {
   border: 0.5px solid lightgray;
   padding: 5px;
   border-radius: 4px;
+}
+select {
+  border-radius: 4px;
+}
+@media (max-width: 768px) {
+  .event-card {
+    width: 90%;
+  }
+
+  .event-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .event-header select {
+    margin-bottom: 10px;
+  }
+
+  .event-header h3 {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .event-date {
+    margin-top: 0.5rem;
+  }
+
+  .event-body p {
+    font-size: 0.9rem;
+  }
+
+  .event-description {
+    height: auto;
+  }
+
+  .btn-div {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .edit-event-btn,
+  .save-event-btn,
+  .cancel-event-btn {
+    width: 100%;
+    margin: 10px 0;
+  }
 }

@@ -40,12 +40,28 @@ function getCountdownString(timestamp) {
   return `Countdown until event: ${parts.join(" ")}.`;
 }
 
+function statusColor(status) {
+  switch (status) {
+    case "Otkazan":
+      return "red";
+    case "Završen":
+      return "purple";
+    case "Uskoro":
+      return "green";
+    case "U tijeku":
+      return "yellow";
+    default:
+      return "black";
+  }
+}
+
 function EventCard({ event }) {
   const { naziv, vrijeme, opis, ulica, latitude, longitude, date } = event;
 
   const [isEditing, setIsEditing] = useState(false);
   const [updatedEvent, setUpdatedEvent] = useState(event);
   const [organizer, setOrganizer] = useState(null);
+  const [status, setStatus] = useState(null);
 
   const mapRef = React.useRef(null);
 
@@ -81,8 +97,25 @@ function EventCard({ event }) {
     }
   };
 
+  const getEventStatus = async () => {
+    try {
+      // console.log(event.dogadaj_id);
+      const response = await axios.get(
+        "http://localhost:5000/getEventStatusId",
+        {
+          params: { dogadaj_id: event.dogadaj_id },
+        }
+      );
+
+      setStatus(response.data);
+    } catch (error) {
+      alert("Error getting event status id: " + error);
+    }
+  };
+
   useEffect(() => {
     getOrganizer();
+    getEventStatus();
   }, [event.dogadaj_id]);
 
   const handleInputChange = (e) => {
@@ -96,8 +129,6 @@ function EventCard({ event }) {
   const handleEditClick = () => {
     setIsEditing((prevState) => !prevState);
   };
-
-  const currentDate = new Date();
 
   const handleSave = () => {
     console.log("Updated Event State:", updatedEvent);
@@ -132,6 +163,22 @@ function EventCard({ event }) {
             updatedEvent.naziv
           )}
         </h3>
+
+        {isEditing ? (
+          <select
+            name="status_id"
+            value={updatedEvent.status_id}
+            onChange={handleInputChange}
+          >
+            <option value={-1}>Canceled</option>
+            <option value={0}>Finished</option>
+            <option value={1}>Soon</option>
+            <option value={2}>In progress</option> {/*ovo maknit?*/}
+          </select>
+        ) : (
+          <h4 style={{ color: statusColor(status) }}>{status}</h4>
+        )}
+
         {isEditing ? (
           <input
             name="datum"

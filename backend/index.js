@@ -602,7 +602,7 @@ app.post("/removeAttendee", async (req, res) => {
 });
 
 app.post("/updateEvent", async (req, res) => {
-  const { dogadaj_id, opis, ulica, datum, time, naziv } = req.body;
+  const { dogadaj_id, opis, ulica, datum, time, naziv, status_id } = req.body;
 
   eventDateTime = new Date(`${datum}T${time}`);
 
@@ -614,8 +614,8 @@ app.post("/updateEvent", async (req, res) => {
 
   const sql = `
       UPDATE dogadaji
-      SET naziv = $1, opis = $2, ulica = $3, vrijeme = $4
-      WHERE dogadaj_id = $5
+      SET naziv = $1, opis = $2, ulica = $3, vrijeme = $4, status_id = $5
+      WHERE dogadaj_id = $6
     `;
   try {
     const result = await client.query(sql, [
@@ -623,6 +623,7 @@ app.post("/updateEvent", async (req, res) => {
       opis,
       ulica,
       eventDateTime,
+      status_id,
       dogadaj_id,
     ]);
     if (result.rowCount > 0) {
@@ -661,6 +662,39 @@ app.get("/getOrganizer", async (req, res) => {
       return res.json({ message: "Error getting user by id from users" });
 
     return res.json(result.rows[0].ime);
+  } catch (err) {
+    console.error(err);
+  }
+});
+
+app.get("/getEventStatusId", async (req, res) => {
+  const { dogadaj_id } = req.query;
+
+  const getStatusIdSql = "SELECT status_id FROM dogadaji WHERE dogadaj_id = $1";
+  const getStatusByIdSql = "SELECT naziv FROM statusi WHERE status_id = $1";
+
+  let statusId;
+
+  try {
+    const result = await client.query(getStatusIdSql, [dogadaj_id]);
+
+    if (result.rowCount <= 0)
+      return res.json({ message: "Error getting event status id from events" });
+
+    statusId = result.rows[0].status_id;
+  } catch (err) {
+    console.error(err);
+  }
+
+  try {
+    const statusResult = await client.query(getStatusByIdSql, [statusId]);
+
+    if (statusResult.rowCount <= 0)
+      return res.json({
+        message: "Error getting event status from status table",
+      });
+
+    return res.json(statusResult.rows[0].naziv);
   } catch (err) {
     console.error(err);
   }
