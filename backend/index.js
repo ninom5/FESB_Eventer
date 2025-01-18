@@ -512,7 +512,8 @@ app.post("/upComingEvents", async (req, res) => {
     }
 
     const korisnik_id = resUserId.rows[0].korisnik_id;
-    const status = "Uskoro";
+    const status1 = "Uskoro";
+    const status2 = "U tijeku";
 
     const sql = `
     SELECT 
@@ -545,12 +546,12 @@ app.post("/upComingEvents", async (req, res) => {
 	  LEFT JOIN 
 	  VEZE_KORISNICI_DOGADAJI VKD ON VKD.KORISNIK_ID = $1 AND VKD.DOGADAJ_ID = D.DOGADAJ_ID
 	  WHERE 
-		(S.Naziv = $2) AND
+		(S.Naziv = $2 OR S.Naziv = $3) AND
 		VRIJEME > CURRENT_TIMESTAMP
 	  ORDER BY VRIJEME ASC
     LIMIT 15
   `;
-    const resSelect = await client.query(sql, [korisnik_id, status]);
+    const resSelect = await client.query(sql, [korisnik_id, status1, status2]);
 
     res.json(resSelect.rows);
   } catch (err) {

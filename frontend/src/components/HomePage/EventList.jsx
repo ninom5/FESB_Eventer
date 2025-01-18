@@ -42,10 +42,10 @@ function EventList({ events, navigate }) {
   );
 
   const settings = {
-    autoplay: true,
+    autoplay: false,
     autoplaySpeed: 3000,
     dots: true,
-    infinite: true,
+    infinite: false,
     slidesToShow: 5,
     slidesToScroll: 1,
     arrows: true,
@@ -53,6 +53,13 @@ function EventList({ events, navigate }) {
     prevArrow: <CustomPrevArrow />,
   };
 
+  const screendWidth = window.innerWidth;
+
+  if (events.length >= 5) settings.infinite = true;
+
+  if (screendWidth < 800) settings.slidesToShow = 3;
+  else if (screendWidth >= 800 && screendWidth < 1100)
+    settings.slidesToShow = 4;
   return (
     <div className="events-container">
       <h3>Upcoming events</h3>
