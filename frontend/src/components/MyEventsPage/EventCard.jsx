@@ -47,7 +47,7 @@ function statusColor(status) {
     case "Završen":
       return "purple";
     case "Uskoro":
-      return "green";
+      return "#33cc33";
     case "U tijeku":
       return "yellow";
     default:

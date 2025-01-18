@@ -17,7 +17,7 @@
 
 .event-card {
   background-color: black;
-  width: 40%;
+  width: 30%;
   border-radius: 12px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
   transition: box-shadow 0.2s ease;
@@ -161,6 +161,7 @@ textarea {
 select {
   border-radius: 4px;
 }
+
 @media (max-width: 768px) {
   .event-card {
     width: 90%;
@@ -201,5 +202,23 @@ select {
   .cancel-event-btn {
     width: 100%;
     margin: 10px 0;
+  }
+}
+
+@media (min-width: 768.1px) and (max-width: 1300px) {
+  .event-card {
+    width: 40%;
+  }
+  .event-header {
+    flex-direction: column;
+  }
+  .event-header h3 {
+    margin-bottom: 10px;
+  }
+  .event-header h4 {
+    margin-bottom: 10px;
+  }
+  select {
+    margin-bottom: 10px;
   }
 }
