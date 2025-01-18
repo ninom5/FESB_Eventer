@@ -268,7 +268,7 @@
   right: -40px;
 }
 
-@media (min-width: 770px) and (max-width: 1500px) {
+@media (min-width: 770px) and (max-width: 1600px) {
   .events-container {
     height: auto;
     width: 100%;

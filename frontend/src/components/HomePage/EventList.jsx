@@ -42,10 +42,10 @@ function EventList({ events, navigate }) {
   );
 
   const settings = {
-    autoplay: false,
-    autoplaySpeed: 3000,
+    autoplay: true,
+    autoplaySpeed: 4000,
     dots: true,
-    infinite: false,
+    infinite: true,
     slidesToShow: 5,
     slidesToScroll: 1,
     arrows: true,
@@ -55,7 +55,7 @@ function EventList({ events, navigate }) {
 
   const screendWidth = window.innerWidth;
 
-  if (events.length >= 5) settings.infinite = true;
+  if (events.length < 5) settings.infinite = false;
 
   if (screendWidth < 800) settings.slidesToShow = 3;
   else if (screendWidth >= 800 && screendWidth < 1100)
