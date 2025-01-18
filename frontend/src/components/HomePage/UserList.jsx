@@ -21,7 +21,7 @@ function UserList({ mostActiveUsers, selectedUser, setSelectedUser }) {
                     {item.ime} {item.prezime}
                   </p>
                   <p>{item.email}</p>
-                  <p>{item.tkorisnika === "Korisnik" ? "User" : "Organiser"}</p>
+                  <p>{item.tkorisnika === "user" ? "Organiser" : "Admin"}</p>
                 </div>
               </div>
               <div className="homeUserCardData">
@@ -32,12 +32,12 @@ function UserList({ mostActiveUsers, selectedUser, setSelectedUser }) {
                       : "Upcoming event: "}
                     {item.sljedeci}
                   </p>
-                  <p>
+                  {/* <p>
                     {item.tkorisnika === "Korisnik"
                       ? "No. attended events: "
                       : "No. organised events: "}
                     {item.brojdogadaja}
-                  </p>
+                  </p> */}
                 </div>
                 <button>See more</button>
               </div>

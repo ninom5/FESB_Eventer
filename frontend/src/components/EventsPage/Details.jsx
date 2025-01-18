@@ -18,11 +18,14 @@ export function Details({
   events,
   isHovered,
   setIsHovered,
+  isAdmin,
+  handleDeleteEvent,
 }) {
   useEffect(() => {
     if (event && events)
       setEvent(events.find((item) => item.dogadaj_id == event.dogadaj_id));
   }, [events]);
+
   return (
     <div className="event">
       {event ? (
@@ -36,7 +39,7 @@ export function Details({
                 icon={isHovered ? solidCircleCheck : regularCircleCheck}
                 size="2x"
                 title={
-                  event?.dolazi ? "Remove attendance" : "Confrim attendance"
+                  event?.dolazi ? "Remove attendance" : "Confirm attendance"
                 }
                 color="white"
                 style={{
@@ -53,9 +56,17 @@ export function Details({
             <div className="event-desc">
               <div className="event-desc-details">
                 <p>{event?.opis}</p>
-                <p style={{ width: "100%", height: "auto" }}>
-                  No. attendees: {event?.broj_posjetitelja}
-                </p>
+              </div>
+              <div className="event-desc-footer">
+                <p>No. attendees: {event?.broj_posjetitelja}</p>
+                {isAdmin && (
+                  <button
+                    className="delete-event-button"
+                    onClick={() => handleDeleteEvent(event.dogadaj_id)}
+                  >
+                    Delete Event
+                  </button>
+                )}
               </div>
             </div>
             <div className="event-footer">

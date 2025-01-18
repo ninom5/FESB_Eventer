@@ -50,8 +50,8 @@ app.post("/register", (req, res) => {
 
       // Both email and username are available, register the user
       const sql = `
-        INSERT INTO korisnici_role (ime, prezime, username, email, sifra)
-        VALUES ($1, $2, $3, $4, $5)
+        INSERT INTO korisnici_role (ime, prezime, username, email, sifra, tkorisnika)
+        VALUES ($1, $2, $3, $4, $5, 'user')
       `;
 
       bcrypt.hash(req.body.password.toString(), salt, (err, hash) => {
@@ -97,13 +97,19 @@ app.post("/login", (req, res) => {
 
       // Generate JWT token
       const Accesstoken = jwt.sign(
-        { username: user.username },
+        {
+          username: user.username,
+          role: user.tkorisnika,
+          userId: user.korisnik_id,
+        },
         process.env.ACCESS_TOKEN_SECRET
       );
 
       res.json({
         accessToken: Accesstoken,
         email: user.email,
+        role: user.tkorisnika,
+        userId: user.korisnik_id,
       });
     });
   });
@@ -402,7 +408,7 @@ app.post("/mostActiveUsers", (req, res) => {
              KR.USERNAME, 
              KR.EMAIL
     ORDER BY COUNT(D.DOGADAJ_ID) DESC
-    LIMIT 5
+    LIMIT 4
   `;
   client.query(sql, [email], (error, result) => {
     if (error) {
@@ -710,4 +716,55 @@ app.get("/getEventStatusId", async (req, res) => {
 
 app.listen(5000, () => {
   console.log("Server is running on port 5000");
+});
+
+const verifyRole = require("./verifyRole");
+
+app.delete(
+  "/admin/delete-user/:id",
+  verifyRole(["admin"]),
+  async (req, res) => {
+    const userId = parseInt(req.params.id, 10);
+    const loggedInUserId = req.user.userId;
+
+    if (userId === loggedInUserId)
+      return res.status(403).send("You cannot delete your own account.");
+
+    try {
+      await client.query(
+        `DELETE FROM veze_korisnici_dogadaji
+       WHERE dogadaj_id IN (SELECT dogadaj_id FROM dogadaji WHERE korisnik_id = $1)`,
+        [userId]
+      );
+
+      await client.query("DELETE FROM dogadaji WHERE korisnik_id = $1", [
+        userId,
+      ]);
+
+      const result = await client.query(
+        "DELETE FROM korisnici_role WHERE korisnik_id = $1",
+        [userId]
+      );
+
+      if (result.rowCount === 0) return res.status(404).send("User not found");
+
+      res.send("User deleted successfully");
+    } catch (err) {
+      console.error("Error deleting user:", err);
+
+      res.status(500).send("Internal Server Error");
+    }
+  }
+);
+
+app.delete("/admin/delete-event/:id", verifyRole(["admin"]), (req, res) => {
+  const eventId = req.params.id;
+
+  const deleteEventQuery = "DELETE FROM dogadaji WHERE dogadaj_id = $1";
+
+  client.query(deleteEventQuery, [eventId], (err, result) => {
+    if (err) return res.status(500).send("Error deleting event");
+
+    res.send("Event deleted successfully");
+  });
 });

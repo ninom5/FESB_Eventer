@@ -36,22 +36,6 @@
   gap: 30px;
 }
 
-/* .newEventForm {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: flex-start;
-  border-radius: 8px;
-  padding: 1em;
-  background-color: #ffffff;
-  width: 90%;
-  max-width: 25vw;
-  height: 40vh;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  margin-top: 20px;
-  transition: all 1s ease;
-} */
-
 .newEventForm {
   display: flex;
   flex-direction: column;
@@ -153,9 +137,10 @@ textarea::-webkit-scrollbar-thumb {
   display: flex;
   justify-content: space-between;
   width: 80vw;
-  height: 30vh;
+  height: 33vh;
   opacity: 1;
   transition: all 1s ease;
+  gap: 1vw;
 }
 
 .event-container.hidden {
@@ -166,7 +151,7 @@ textarea::-webkit-scrollbar-thumb {
   display: flex;
   gap: 1vw;
   padding: 1em;
-  width: 50vw;
+  min-width: 50vw;
   height: 100%;
   border-radius: 6px;
   border: 1px solid rgba(33, 33, 33, 0.934);
@@ -183,8 +168,6 @@ textarea::-webkit-scrollbar-thumb {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  width: 100%;
-  height: 100%;
 }
 
 .event-title {
@@ -195,47 +178,80 @@ textarea::-webkit-scrollbar-thumb {
 .event-title p {
   font-family: "Roboto", sans-serif;
   font-weight: 400;
-  font-size: 2em;
+  font-size: 1.5em;
   text-transform: uppercase;
   font-weight: bold;
   color: white;
 }
 
-.event-title h3 {
-  font-family: "Roboto", sans-serif;
-  font-weight: 400;
-  font-size: 1.5em;
-  font-weight: bold;
-  color: rgb(126, 126, 126);
-}
-
 .event-desc {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column;
+  gap:50px;
   width: 100%;
-  height: 100%;
   margin-top: 2vh;
-  padding-bottom: 2vh;
 }
 
 .event-desc-details {
   display: flex;
   flex-direction: column;
-  width: 50%;
-  height: 100%;
-  justify-content: space-between;
-  align-items: end;
+  width: 35vw;
+  height: 50px;
+  margin-bottom: 10px;
+  padding-right: 10px;
 }
 
 .event-desc-details p {
   font-family: "Roboto", sans-serif;
   font-size: 1em;
-  height: 50%;
-  width: 100%;
+  height: 100%;
+  width: 65%;
   font-weight: bold;
   color: white;
+  overflow-y: auto;
+  overflow-x: hidden;
+  word-wrap: break-word;
 }
+
+.event-desc-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  color: white;
+}
+
+.delete-event-button {
+  color: white;
+  background-color: rgba(16, 16, 16, 0.934);
+  border: 3px solid white;
+  padding: 5px;
+  border-radius: 5px;
+  font-weight: 900;
+  margin-bottom: 5px;
+}
+
+.delete-user-button{
+  color: white;
+  background-color: rgba(16, 16, 16, 0.934);
+  border: 3px solid white;
+  padding: 5px;
+  border-radius: 5px;
+  font-weight: 900;
+}
+
+.delete-user-button:hover {
+  background-color: white;
+  color: black;
+  cursor: pointer;
+}
+
+.delete-event-button:hover {
+  background-color: white;
+  color: black;
+  cursor: pointer;
+}
+
 .attend-button {
   height: 2em;
   width: 7vw;
@@ -270,7 +286,7 @@ textarea::-webkit-scrollbar-thumb {
 
 .event-status {
   display: flex;
-  width: 5vw;
+  width: 7vw;
   height: 3vh;
   justify-content: center;
   align-items: center;
@@ -279,7 +295,7 @@ textarea::-webkit-scrollbar-thumb {
 
 .organiser {
   display: flex;
-  align-items: start;
+  align-items: center;
   flex-direction: column;
   justify-content: space-between;
   padding: 1em;
@@ -350,4 +366,22 @@ textarea::-webkit-scrollbar-thumb {
   mix-blend-mode: lighten;
   -webkit-background-clip: text;
   background-clip: text;
+}
+
+.event-desc-details p::-webkit-scrollbar {
+  width: 10px;
+}
+
+.event-desc-details p::-webkit-scrollbar-track {
+  background: rgba(33, 33, 33, 0.934);
+  border-radius: 5px;
+}
+
+.event-desc-details p::-webkit-scrollbar-thumb {
+  background: rgba(236, 236, 236, 0.7);
+  border-radius: 5px;
+}
+
+.event-desc-details p::-webkit-scrollbar-thumb:hover {
+  background: rgba(236, 236, 236, 1);
 }

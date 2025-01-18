@@ -25,6 +25,8 @@ function LoginPage() {
         if (accessToken) {
           localStorage.setItem("email", response.data.email);
           localStorage.setItem("accessToken", response.data.accessToken);
+          localStorage.setItem("role", response.data.role);
+          localStorage.setItem("userId", response.data.userId);
           navigate("/");
         } else if (response.data === "Invalid username or password") {
           alert("Invalid username or password");
