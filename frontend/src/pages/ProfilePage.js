@@ -21,6 +21,7 @@ function ProfilePage() {
   const [isEditing, setIsEditing] = useState(false);
   const [updatedData, setUpdatedData] = useState({});
   const [cities, setCities] = useState([]);
+  const [events, setEvents] = useState([]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -50,6 +51,17 @@ function ProfilePage() {
         console.error("Error fetching cities:", error);
       });
   }, []);
+
+  useEffect(() => {
+    axios
+      .get(`http://localhost:5000/events?korisnik_id=${userData.korisnik_id}`)
+      .then((response) => {
+        setEvents(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching data: ", error);
+      });
+  }, [userData.korisnik_id]);
 
   const handleEdit = () => {
     setIsEditing(true);
@@ -94,8 +106,7 @@ function ProfilePage() {
   return (
     <div className="profilePage">
       <Header />
-      <div className="profileContainer">
-        <ProfilePicture />
+      <div className="profile-page">
         <ProfileContainer
           isEditing={isEditing}
           updatedData={updatedData}
@@ -103,12 +114,10 @@ function ProfilePage() {
           userData={userData}
           cities={cities}
           setUpdatedData={setUpdatedData}
-        />
-        <ProfileActions
-          handleSave={handleSave}
           handleCancel={handleCancel}
+          handleSave={handleSave}
           handleEdit={handleEdit}
-          isEditing={isEditing}
+          events={events}
         />
       </div>
     </div>

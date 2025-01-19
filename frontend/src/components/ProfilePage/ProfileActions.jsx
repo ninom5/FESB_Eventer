@@ -1,7 +1,7 @@
 function ProfileActions({ isEditing, handleEdit, handleSave, handleCancel }) {
   return (
     <div className="profileActions">
-      {isEditing ? (
+      {/* {isEditing ? (
         <>
           <button onClick={handleSave} className="saveButton">
             Save Changes
@@ -14,7 +14,7 @@ function ProfileActions({ isEditing, handleEdit, handleSave, handleCancel }) {
         <button onClick={handleEdit} className="editButton">
           Edit Profile
         </button>
-      )}
+      )} */}
     </div>
   );
 }
