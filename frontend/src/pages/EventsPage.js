@@ -19,7 +19,7 @@ function EventsPage() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (location?.state) {
+    if (location.state) {
       setSelectedEvent(location.state);
       setCenter({
         lat: parseFloat(location.state.latitude),
@@ -46,8 +46,6 @@ function EventsPage() {
   const [selectedEvent, setSelectedEvent] = useState(location?.state ?? null);
 
   useEffect(() => {
-    getEvents();
-
     const email = localStorage.getItem("email");
     axios
       .get(`http://localhost:5000/user?email=${email}`)
@@ -61,6 +59,8 @@ function EventsPage() {
       .catch((error) => {
         console.error("Error fetching user ID:", error);
       });
+
+    getEvents();
   }, []);
 
   const getEvents = async () => {
@@ -72,8 +72,8 @@ function EventsPage() {
       });
 
       setTimeout(() => {
-        setEvents(resEvents.data);
         setLoading(false);
+        setEvents(resEvents.data);
       }, 1000);
     } catch (err) {
       console.log(err);

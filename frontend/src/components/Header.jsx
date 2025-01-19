@@ -1,7 +1,12 @@
 import { useState, useEffect, useRef } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import headerLogo from "../assets/headerLogo.jpg";
-import { faSearch } from "@fortawesome/free-solid-svg-icons";
+import {
+  faSearch,
+  faPartyHorn,
+  faCircleUser,
+} from "@fortawesome/free-solid-svg-icons";
+import { Link } from "react-router-dom";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
@@ -51,11 +56,15 @@ function Header() {
   return (
     <header className="homePage-header">
       <div className="header-logo">
-        <img src={headerLogo} alt="Eventer logo" />
+        <img
+          src={headerLogo}
+          style={{ cursor: "pointer" }}
+          alt="Eventer logo"
+          onClick={() => navigate("/")}
+        />
       </div>
       <div className="search-bar-container" ref={searchContainerRef}>
         <div>
-          <FontAwesomeIcon icon={faSearch} color="white" />
           <input
             className="search-input"
             onChange={(e) => {
@@ -71,6 +80,9 @@ function Header() {
             value={searchValue}
             placeholder="Search events and users"
           />
+          <div className="search-icon">
+            <FontAwesomeIcon icon={faSearch} color="white" />
+          </div>
         </div>
         {showResults && (
           <div className="search-results" ref={resultsRef}>
@@ -83,7 +95,7 @@ function Header() {
                       key={event.id}
                       className="result-item"
                       onClick={() => {
-                        navigate("/events", { state: event });
+                        navigate("/events", { state: event, replace: true });
                         setShowResults(false);
                       }}
                     >
@@ -115,15 +127,12 @@ function Header() {
       <nav className="homePage-navigation">
         <ul>
           <li>
-            <a href="/">Home</a>
-          </li>
-          <li>
             <a href="/profile">Profile</a>
           </li>
           <li>
             <a href="/events">Events</a>
           </li>
-          <li>
+          <li className="logout-button">
             <a
               href="/login"
               onClick={() => localStorage.removeItem("accessToken")}

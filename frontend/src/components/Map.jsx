@@ -6,6 +6,7 @@ import {
   Marker,
   InfoWindow,
 } from "@react-google-maps/api";
+import Loader from "../components/Loader";
 
 const libraries = ["marker", "places"];
 
@@ -27,6 +28,7 @@ function Map({
   useEffect(() => {
     if (events) setMapEvents(events);
   }, [events]);
+
   return (
     <LoadScript
       googleMapsApiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY}
