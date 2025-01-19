@@ -21,6 +21,7 @@ function ProfilePage() {
   const [isEditing, setIsEditing] = useState(false);
   const [updatedData, setUpdatedData] = useState({});
   const [cities, setCities] = useState([]);
+  const [events, setEvents] = useState([]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -51,6 +52,17 @@ function ProfilePage() {
       });
   }, []);
 
+  useEffect(() => {
+    axios
+      .get(`http://localhost:5000/events?korisnik_id=${userData.korisnik_id}`)
+      .then((response) => {
+        setEvents(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching data: ", error);
+      });
+  }, [userData.korisnik_id]);
+
   const handleEdit = () => {
     setIsEditing(true);
   };
@@ -60,7 +72,7 @@ function ProfilePage() {
     setUpdatedData(userData);
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (
       updatedData.ime === "" ||
       updatedData.prezime === "" ||
@@ -70,15 +82,23 @@ function ProfilePage() {
       return;
     }
 
-    axios
-      .put("http://localhost:5000/userUpdate", updatedData)
-      .then(() => {
-        setUserData(updatedData);
-        setIsEditing(false);
-      })
-      .catch((error) => {
-        console.error("Error saving user data:", error);
+    try {
+      const response = await axios.get("http://localhost:5000/checkUsername", {
+        params: { username: updatedData.username },
       });
+
+      if (response.data === "Username already exists.") {
+        alert(response.data);
+        return;
+      }
+
+      await axios.put("http://localhost:5000/userUpdate", updatedData);
+      setUserData(updatedData);
+      setIsEditing(false);
+    } catch (error) {
+      console.error("Error saving data: " + error);
+      alert("Error updating data");
+    }
   };
 
   if (!userData || !cities) return <div>Loading...</div>;
@@ -86,8 +106,7 @@ function ProfilePage() {
   return (
     <div className="profilePage">
       <Header />
-      <div className="profileContainer">
-        <ProfilePicture />
+      <div className="profile-page">
         <ProfileContainer
           isEditing={isEditing}
           updatedData={updatedData}
@@ -95,12 +114,10 @@ function ProfilePage() {
           userData={userData}
           cities={cities}
           setUpdatedData={setUpdatedData}
-        />
-        <ProfileActions
-          handleSave={handleSave}
           handleCancel={handleCancel}
+          handleSave={handleSave}
           handleEdit={handleEdit}
-          isEditing={isEditing}
+          events={events}
         />
       </div>
     </div>
