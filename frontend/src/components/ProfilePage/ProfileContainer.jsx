@@ -242,7 +242,7 @@ function ProfileContainer({
             <h3>Your events</h3>
             <ul></ul>
             {events.map((event) => (
-              <li>{event.naziv}</li> //dodat komponentu za listu dogadaja
+              <li>{event.naziv}</li> //dodat komponentu za listu dogadaaja
             ))}
           </div>
         </div>
