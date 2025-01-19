@@ -13,10 +13,49 @@
   background-color: rgb(30, 30, 30);
 }
 
-.homeContainer {
+.home-section-container {
+  display: flex;
+  justify-content: space-between;
+  padding: 5vh 5vw 5vh 10vw;
+  width: 80vw;
+}
+
+.home-section-container-text {
   display: flex;
   flex-direction: column;
-  justify-content: start;
+  gap: 1.5vh;
+}
+
+.home-section-container p {
+  font-size: 3em;
+  font-weight: 500;
+  color: rgb(255, 255, 255);
+  white-space: pre-wrap;
+}
+
+.home-section-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2vh;
+  gap: 0.2vw;
+  width: 6vw;
+  padding: 0.5vh 1vw;
+  border-radius: 16px;
+  background-color: green;
+  cursor: pointer;
+  transition: background-color 0.5s ease;
+}
+
+.home-section-button:hover {
+  background-color: darkgreen;
+}
+.home-section-button p {
+  font-size: 1.5em;
+}
+.homeContainer {
+  display: flex;
+  justify-content: space-between;
   padding: 2vh 0;
   width: 80vw;
   margin-bottom: 4vh;
@@ -55,7 +94,7 @@
   flex-wrap: nowrap;
   overflow: hidden;
   padding: 0 0.5vw;
-  height: 30vh;
+  height: 50vh;
   gap: 1vw;
 }
 
@@ -63,20 +102,14 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 22%;
-  height: 90%;
-  border-radius: 3px;
-  border: 1px groove;
-  border-color: white;
+  position: relative;
+  width: 14vw;
+  height: 40vh;
   font-size: 0.8em;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 15px;
   padding: 1vh 0.2vw;
-  background-color: rgba(255, 255, 255, 0.4);
-  flex-shrink: 0;
-}
-
-.selected {
-  transform: scale(1.02);
+  background-color: rgb(45, 45, 45);
 }
 
 .homeUserCardProfile {
@@ -85,20 +118,32 @@
   gap: 3vw;
   width: 100%;
   height: 45%;
-  padding: 1vh 0;
+  padding: 5vh 0 0 0;
 }
 
 .homeUserCardProfileText {
   display: flex;
   flex-direction: column;
-  gap: 1vh;
+  align-items: center;
+  gap: 0.2vh;
   width: 40%;
   height: 100%;
 }
 
+.homeUserCardProfileText p {
+  font-weight: 700;
+  font-size: 13px;
+  text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  color: white;
+}
 .homeUserCardProfile img {
-  width: auto;
-  height: 100%;
+  position: absolute;
+  top: -10%;
+  border-radius: 100%;
+  width: 4vw;
+  height: auto;
+  border: 6px solid #282828;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
 }
 
 .homeUserCardData {
@@ -111,37 +156,20 @@
 .homeUserCardData div {
   display: flex;
   flex-direction: column;
+  align-items: center;
   height: 100%;
   padding: 1vh 1vw;
   gap: 1vh;
   border-top: 1px solid rgb(196, 196, 196);
 }
 
-.homeUserCardData button {
-  height: 4vh;
-  border: 0.5px;
-  border-color: rgb(241, 241, 241);
-  background-color: rgb(216, 216, 216);
-  color: rgb(59, 59, 59);
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 1em;
-  transition: background-color 0.3s ease, color 0.3s ease,
-    border-color 0.3s ease;
-}
-
-.homeUserCardData button:hover {
-  background-color: rgba(216, 216, 216, 0.581);
-  color: black;
-  border-color: black;
-}
-
 .events-container {
-  width: 80vw;
   display: flex;
   flex-direction: column;
   align-items: start;
   justify-content: center;
+  height: 100%;
+  gap: 0.5vh;
 }
 
 .events-container h3 {
@@ -150,19 +178,21 @@
 }
 
 .upcomingEvents-container {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
   width: 100%;
-  height: 40vh;
+  height: 50vh;
 }
 
 .eventCard {
   width: 100%;
-  height: 35vh;
-  padding: 20px;
-  background-color: #fff;
-  border-radius: 8px;
-  border: 1px solid #ddd;
+  height: 42vh;
+  padding: 12px;
+  background-color: #343434;
+  border-radius: 16px;
+  border: 1px solid #454545;
   box-sizing: border-box;
-  margin: 0 auto;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -172,18 +202,22 @@
 }
 
 .event-card-header {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
   text-align: center;
   font-size: 1.2em;
   font-weight: bold;
   color: #333;
-  border-bottom: 1px solid #ddd;
   padding-bottom: 10px;
   flex: 1;
 }
 
 .event-card-header img {
+  border-radius: 8px;
   width: 100%;
-  height: 8vh;
+  height: 82%;
   object-fit: cover;
 }
 
@@ -224,7 +258,8 @@
   transition: 0.7s;
 }
 
-.eventCard:hover {
+.eventCard:hover,
+.homeUserCard:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15), 0 4px 6px rgba(0, 0, 0, 0.1);
   transition: 0.7s;
@@ -237,8 +272,7 @@
 }
 
 .slick-slider.slick-initialized {
-  height: 100%;
-  width: 100%;
+  width: 16vw;
 }
 .slick-slide > div {
   margin: 0 10px;

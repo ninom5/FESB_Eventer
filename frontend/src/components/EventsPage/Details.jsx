@@ -111,7 +111,7 @@ export function Details({
           </div>
         </>
       ) : (
-        <p className="upcoming-text" style={{ fontSize: "2em" }}>
+        <p className="upcoming-text" style={{ fontSize: "3em" }}>
           SELECT EVENT TO SEE DETAILS
         </p>
       )}
