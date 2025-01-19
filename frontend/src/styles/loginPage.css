@@ -11,16 +11,6 @@
   font-family: "Lato", sans-serif;
   filter: brightness(0.75);
 }
-/* .login-page::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.17);
-  pointer-events: none;
-} */
 
 .login-infoLogo {
   display: flex;
@@ -72,7 +62,6 @@
 
 .login-div h2 {
   display: flex;
-  font-family: "Roboto", sans-serif;
   font-size: 2em;
   width: 85%;
   padding-bottom: 0.5vh;

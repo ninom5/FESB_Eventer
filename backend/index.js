@@ -424,7 +424,7 @@ app.post("/mostActiveUsers", (req, res) => {
              KR.USERNAME, 
              KR.EMAIL
     ORDER BY COUNT(D.DOGADAJ_ID) DESC
-    LIMIT 4
+LIMIT 3
   `;
   client.query(sql, [email], (error, result) => {
     if (error) {
