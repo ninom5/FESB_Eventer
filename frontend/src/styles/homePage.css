@@ -262,7 +262,6 @@
 .homeUserCard:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15), 0 4px 6px rgba(0, 0, 0, 0.1);
-  /* transition: all 0.5s ease-in-out; */
   transition: 0.7s;
   border: 1px solid black;
 }
@@ -300,4 +299,30 @@
 
 .custom-next-arrow {
   right: -40px;
+}
+
+@media (min-width: 770px) and (max-width: 1600px) {
+  .events-container {
+    height: auto;
+    width: 100%;
+  }
+  .upcomingEvents-container {
+    width: 100%;
+    height: auto;
+  }
+  .slick-list {
+    height: 100%;
+  }
+  .eventCard {
+    width: 100%;
+    padding: 10px;
+    height: 100%;
+    min-height: 370px;
+  }
+}
+
+@media (max-width: 950px) {
+  .homeUserCardProfile img {
+    display: none;
+  }
 }

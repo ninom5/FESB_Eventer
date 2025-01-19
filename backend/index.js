@@ -50,8 +50,8 @@ app.post("/register", (req, res) => {
 
       // Both email and username are available, register the user
       const sql = `
-        INSERT INTO korisnici_role (ime, prezime, username, email, sifra)
-        VALUES ($1, $2, $3, $4, $5)
+        INSERT INTO korisnici_role (ime, prezime, username, email, sifra, tkorisnika)
+        VALUES ($1, $2, $3, $4, $5, 'user')
       `;
 
       bcrypt.hash(req.body.password.toString(), salt, (err, hash) => {
@@ -97,13 +97,19 @@ app.post("/login", (req, res) => {
 
       // Generate JWT token
       const Accesstoken = jwt.sign(
-        { username: user.username },
+        {
+          username: user.username,
+          role: user.tkorisnika,
+          userId: user.korisnik_id,
+        },
         process.env.ACCESS_TOKEN_SECRET
       );
 
       res.json({
         accessToken: Accesstoken,
         email: user.email,
+        role: user.tkorisnika,
+        userId: user.korisnik_id,
       });
     });
   });
@@ -402,7 +408,7 @@ app.post("/mostActiveUsers", (req, res) => {
              KR.USERNAME, 
              KR.EMAIL
     ORDER BY COUNT(D.DOGADAJ_ID) DESC
-    LIMIT 3
+LIMIT 3
   `;
   client.query(sql, [email], (error, result) => {
     if (error) {
@@ -512,6 +518,8 @@ app.post("/upComingEvents", async (req, res) => {
     }
 
     const korisnik_id = resUserId.rows[0].korisnik_id;
+    const status1 = "Uskoro";
+    const status2 = "U tijeku";
 
     const sql = `
     SELECT 
@@ -543,11 +551,13 @@ app.post("/upComingEvents", async (req, res) => {
       STATUSI S ON D.STATUS_ID = S.STATUS_ID
 	  LEFT JOIN 
 	  VEZE_KORISNICI_DOGADAJI VKD ON VKD.KORISNIK_ID = $1 AND VKD.DOGADAJ_ID = D.DOGADAJ_ID
-	  WHERE VRIJEME > CURRENT_TIMESTAMP
+	  WHERE 
+		(S.Naziv = $2 OR S.Naziv = $3) AND
+		VRIJEME > CURRENT_TIMESTAMP
 	  ORDER BY VRIJEME ASC
     LIMIT 15
   `;
-    const resSelect = await client.query(sql, [korisnik_id]);
+    const resSelect = await client.query(sql, [korisnik_id, status1, status2]);
 
     res.json(resSelect.rows);
   } catch (err) {
@@ -601,6 +611,160 @@ app.post("/removeAttendee", async (req, res) => {
   }
 });
 
+app.post("/updateEvent", async (req, res) => {
+  const { dogadaj_id, opis, ulica, datum, time, naziv, status_id } = req.body;
+
+  eventDateTime = new Date(`${datum}T${time}`);
+
+  const currentDate = new Date();
+
+  if (eventDateTime < currentDate) {
+    return res.json({ message: "Date cant be in past" });
+  }
+
+  let newStatus_id = status_id;
+
+  if (!status_id) newStatus_id = parseInt("-1", 10);
+
+  const sql = `
+      UPDATE dogadaji
+      SET naziv = $1, opis = $2, ulica = $3, vrijeme = $4, status_id = $5
+      WHERE dogadaj_id = $6
+    `;
+  try {
+    const result = await client.query(sql, [
+      naziv,
+      opis,
+      ulica,
+      eventDateTime,
+      newStatus_id,
+      dogadaj_id,
+    ]);
+    if (result.rowCount > 0) {
+      return res.json({ message: "Event updated successfully" });
+    } else {
+      return res.status(404).json({ message: "Event not found" });
+    }
+  } catch (err) {
+    console.error(err);
+  }
+});
+
+app.get("/getOrganizer", async (req, res) => {
+  const { dogadaj_id } = req.query;
+  const getUserIdSql = "SELECT korisnik_id FROM dogadaji WHERE dogadaj_id = $1";
+  const getUserNameSql =
+    "SELECT ime FROM korisnici_role WHERE korisnik_id = $1";
+
+  let userId;
+
+  try {
+    const result = await client.query(getUserIdSql, [dogadaj_id]);
+
+    if (result.rowCount <= 0)
+      return res.json({ message: "Error getting user id from event" });
+
+    userId = result.rows[0].korisnik_id;
+  } catch (err) {
+    console.error(err);
+  }
+
+  try {
+    const result = await client.query(getUserNameSql, [userId]);
+
+    if (result.rowCount <= 0)
+      return res.json({ message: "Error getting user by id from users" });
+
+    return res.json(result.rows[0].ime);
+  } catch (err) {
+    console.error(err);
+  }
+});
+
+app.get("/getEventStatusId", async (req, res) => {
+  const { dogadaj_id } = req.query;
+
+  const getStatusIdSql = "SELECT status_id FROM dogadaji WHERE dogadaj_id = $1";
+  const getStatusByIdSql = "SELECT naziv FROM statusi WHERE status_id = $1";
+
+  let statusId;
+
+  try {
+    const result = await client.query(getStatusIdSql, [dogadaj_id]);
+
+    if (result.rowCount <= 0)
+      return res.json({ message: "Error getting event status id from events" });
+
+    statusId = result.rows[0].status_id;
+  } catch (err) {
+    console.error(err);
+  }
+
+  try {
+    const statusResult = await client.query(getStatusByIdSql, [statusId]);
+
+    if (statusResult.rowCount <= 0)
+      return res.json({
+        message: "Error getting event status from status table",
+      });
+
+    return res.json(statusResult.rows[0].naziv);
+  } catch (err) {
+    console.error(err);
+  }
+});
+
 app.listen(5000, () => {
   console.log("Server is running on port 5000");
+});
+
+const verifyRole = require("./verifyRole");
+
+app.delete(
+  "/admin/delete-user/:id",
+  verifyRole(["admin"]),
+  async (req, res) => {
+    const userId = parseInt(req.params.id, 10);
+    const loggedInUserId = req.user.userId;
+
+    if (userId === loggedInUserId)
+      return res.status(403).send("You cannot delete your own account.");
+
+    try {
+      await client.query(
+        `DELETE FROM veze_korisnici_dogadaji
+       WHERE dogadaj_id IN (SELECT dogadaj_id FROM dogadaji WHERE korisnik_id = $1)`,
+        [userId]
+      );
+
+      await client.query("DELETE FROM dogadaji WHERE korisnik_id = $1", [
+        userId,
+      ]);
+
+      const result = await client.query(
+        "DELETE FROM korisnici_role WHERE korisnik_id = $1",
+        [userId]
+      );
+
+      if (result.rowCount === 0) return res.status(404).send("User not found");
+
+      res.send("User deleted successfully");
+    } catch (err) {
+      console.error("Error deleting user:", err);
+
+      res.status(500).send("Internal Server Error");
+    }
+  }
+);
+
+app.delete("/admin/delete-event/:id", verifyRole(["admin"]), (req, res) => {
+  const eventId = req.params.id;
+
+  const deleteEventQuery = "DELETE FROM dogadaji WHERE dogadaj_id = $1";
+
+  client.query(deleteEventQuery, [eventId], (err, result) => {
+    if (err) return res.status(500).send("Error deleting event");
+
+    res.send("Event deleted successfully");
+  });
 });

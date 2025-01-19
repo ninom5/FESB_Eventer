@@ -13,8 +13,13 @@ import { Details } from "./Details";
 export function Event({ event, setEvent, getEvents, events, showForm }) {
   const navigate = useNavigate();
   const [nextEvent, setNextEvent] = useState(null);
+  const [isHovered, setIsHovered] = useState(event?.dolazi);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
+    const role = localStorage.getItem("role");
+    if (role === "admin") setIsAdmin(true);
+
     if (events && event) {
       setIsHovered(event?.dolazi);
       const userEvents = events.filter(
@@ -26,42 +31,81 @@ export function Event({ event, setEvent, getEvents, events, showForm }) {
         .sort((a, b) => new Date(a.vrijeme) - new Date(b.vrijeme))[0];
       setNextEvent(upcomingEvent || null);
     }
-  }, [event]);
+  }, [event, events]);
 
   const handleAttend = async () => {
     try {
       const userEmail = localStorage.getItem("email");
-      const resConfirmAttend = await axios.post(
-        "http://localhost:5000/confirmAttendee",
-        { email: userEmail, dogadaj_id: event?.dogadaj_id }
-      );
+      await axios.post("http://localhost:5000/confirmAttendee", {
+        email: userEmail,
+        dogadaj_id: event?.dogadaj_id,
+      });
 
-      toast.success("Succesfully confirmed attendance!");
+      toast.success("Successfully confirmed attendance!");
       getEvents();
     } catch (err) {
-      console.log("Error confirming attendee: ", err);
+      console.error("Error confirming attendee: ", err);
       toast.error("Error confirming attendance! Try again.");
     }
   };
 
   const handleRemoveAttend = async () => {
-    console.log("usa");
     try {
       const userEmail = localStorage.getItem("email");
-      const resRemoveAttend = await axios.post(
-        "http://localhost:5000/removeAttendee",
-        { email: userEmail, dogadaj_id: event?.dogadaj_id }
-      );
+      await axios.post("http://localhost:5000/removeAttendee", {
+        email: userEmail,
+        dogadaj_id: event?.dogadaj_id,
+      });
 
-      toast("Succesfully removed attendance");
+      toast("Successfully removed attendance");
       getEvents();
     } catch (err) {
-      console.log("Error removing attendee: ", err);
+      console.error("Error removing attendee: ", err);
       toast.error("Error removing attendance! Try again.");
     }
   };
 
-  const [isHovered, setIsHovered] = useState(event?.dolazi);
+  const handleDeleteEvent = async (eventId) => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+      await axios.delete(
+        `http://localhost:5000/admin/delete-event/${eventId}`,
+        config
+      );
+
+      toast.success("Event deleted successfully!");
+      getEvents();
+    } catch (err) {
+      console.error("Error deleting event: ", err);
+      toast.error("Failed to delete event.");
+    }
+  };
+
+  const handleDeleteUser = async (userId) => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+      await axios.delete(
+        `http://localhost:5000/admin/delete-user/${userId}`,
+        config
+      );
+
+      toast.success("User deleted successfully!");
+      getEvents();
+    } catch (err) {
+      console.error("Error deleting user: ", err);
+      toast.error("Failed to delete user.");
+    }
+  };
 
   return (
     <div className={`event-container ${!showForm ? "" : "hidden"}`}>
@@ -74,6 +118,8 @@ export function Event({ event, setEvent, getEvents, events, showForm }) {
         events={events}
         isHovered={isHovered}
         setIsHovered={setIsHovered}
+        isAdmin={isAdmin}
+        handleDeleteEvent={handleDeleteEvent}
       />
       <div className="organiser">
         {event && (
@@ -117,7 +163,7 @@ export function Event({ event, setEvent, getEvents, events, showForm }) {
                       width: "100%",
                     }}
                   >
-                    <div class="upcoming-text">UPCOMING</div>
+                    <div className="upcoming-text">UPCOMING</div>
                     <div
                       style={{
                         display: "flex",
@@ -141,6 +187,14 @@ export function Event({ event, setEvent, getEvents, events, showForm }) {
                   <FontAwesomeIcon icon={faChevronDown} color="white" />
                 </div>
               </div>
+            )}
+            {isAdmin && (
+              <button
+                className="delete-user-button"
+                onClick={() => handleDeleteUser(event.korisnik_id)}
+              >
+                Delete User
+              </button>
             )}
           </>
         )}
