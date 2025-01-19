@@ -60,7 +60,7 @@ function ProfilePage() {
     setUpdatedData(userData);
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (
       updatedData.ime === "" ||
       updatedData.prezime === "" ||
@@ -70,15 +70,23 @@ function ProfilePage() {
       return;
     }
 
-    axios
-      .put("http://localhost:5000/userUpdate", updatedData)
-      .then(() => {
-        setUserData(updatedData);
-        setIsEditing(false);
-      })
-      .catch((error) => {
-        console.error("Error saving user data:", error);
+    try {
+      const response = await axios.get("http://localhost:5000/checkUsername", {
+        params: { username: updatedData.username },
       });
+
+      if (response.data === "Username already exists.") {
+        alert(response.data);
+        return;
+      }
+
+      await axios.put("http://localhost:5000/userUpdate", updatedData);
+      setUserData(updatedData);
+      setIsEditing(false);
+    } catch (error) {
+      console.error("Error saving data: " + error);
+      alert("Error updating data");
+    }
   };
 
   if (!userData || !cities) return <div>Loading...</div>;

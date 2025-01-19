@@ -223,6 +223,22 @@ app.post("/createEvent", async (req, res) => {
   }
 });
 
+app.get("/checkUsername", async (req, res) => {
+  const { username } = req.query;
+
+  const checkUserNameSql = "SELECT * FROM korisnici_role WHERE username = $1";
+  try {
+    const responseResult = await client.query(checkUserNameSql, [username]);
+    if (responseResult.rowCount > 0)
+      return res.json("Username already exists.");
+
+    return res.json("Valid username");
+  } catch (error) {
+    console.error(err);
+    res.json("error checking username");
+  }
+});
+
 app.put("/userUpdate", (req, res) => {
   const {
     email,
