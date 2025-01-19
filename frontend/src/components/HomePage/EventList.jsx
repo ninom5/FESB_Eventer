@@ -2,6 +2,7 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import eventImage from "../../assets/event.jpg";
+import velvet from "../../assets/velvet.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faChevronLeft,
@@ -46,7 +47,7 @@ function EventList({ events, navigate }) {
     autoplaySpeed: 3000,
     dots: true,
     infinite: false,
-    slidesToShow: 5,
+    slidesToShow: 1,
     slidesToScroll: 1,
     arrows: true,
     nextArrow: <CustomNextArrow />,
@@ -68,22 +69,19 @@ function EventList({ events, navigate }) {
               }}
             >
               <div className="event-card-header">
-                <img src={eventImage} alt="" />
-                <h4>{event.naziv}</h4>
-              </div>
-              <div className="event-card-details">
-                <p>
-                  <strong>Description:</strong> {event.opis}
-                </p>
-                <p>
-                  <strong>Time:</strong> {event.vrijeme}
-                </p>
-                <p>
-                  <strong>Organiser:</strong> {event.korisnik}
-                </p>
-                <p>
-                  <strong>Location:</strong> {event.adresa}
-                </p>
+                <img src={velvet} alt="" />
+                <div>
+                  <h4
+                    style={{
+                      textTransform: "uppercase",
+                      color: "white",
+                      fontSize: "1.2em",
+                    }}
+                  >
+                    {event.naziv}
+                  </h4>
+                  <h4 style={{ color: "gray" }}>{event.korisnik}</h4>
+                </div>
               </div>
             </div>
           ))}

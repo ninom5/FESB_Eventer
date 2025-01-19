@@ -7,39 +7,50 @@ function UserList({ mostActiveUsers, selectedUser, setSelectedUser }) {
       <div className="homeUsers">
         {mostActiveUsers?.map((item, index) => {
           return (
-            <li
-              key={index}
-              className={`homeUserCard${
-                selectedUser === index ? " selected" : ""
-              }`}
-              onMouseEnter={() => setSelectedUser(index)}
-            >
+            <li key={index} className="homeUserCard">
               <div className="homeUserCardProfile">
                 <img src={noUserPicture} />
                 <div className="homeUserCardProfileText">
                   <p>
                     {item.ime} {item.prezime}
                   </p>
-                  <p>{item.email}</p>
-                  <p>{item.tkorisnika === "Korisnik" ? "User" : "Organiser"}</p>
+                  <p style={{ marginTop: "1.5vh", color: "gray" }}>
+                    {item.email}
+                  </p>
+                  <p style={{ color: "gray" }}>
+                    {item.tkorisnika === "Korisnik" ? "User" : "Organiser"}
+                  </p>
                 </div>
               </div>
               <div className="homeUserCardData">
                 <div>
-                  <p>
+                  <p
+                    style={{
+                      marginTop: "1vh",
+                      color: "gray",
+                      fontWeight: "500",
+                    }}
+                  >
                     {item.tkorisnika === "Korisnik"
-                      ? "Next attending event: "
-                      : "Upcoming event: "}
+                      ? "NEXT ATTENDING EVENT"
+                      : "UPCOMING EVENT"}
+                  </p>
+                  <p style={{ marginBottom: "2vh", color: "white" }}>
                     {item.sljedeci}
                   </p>
-                  <p>
+                  <p style={{ color: "gray", fontWeight: "500" }}>
                     {item.tkorisnika === "Korisnik"
-                      ? "No. attended events: "
-                      : "No. organised events: "}
-                    {item.brojdogadaja}
+                      ? "No. ATTENDED EVENTS"
+                      : "No. ORGANISED EVENTS"}
                   </p>
+                  <p style={{ color: "white" }}>{item.brojdogadaja}</p>
                 </div>
-                <button>See more</button>
+                <button
+                  className="addEventButton"
+                  style={{ width: "100%", margin: "0" }}
+                >
+                  See more
+                </button>
               </div>
             </li>
           );

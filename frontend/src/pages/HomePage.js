@@ -5,7 +5,7 @@ import EventList from "../components/HomePage/EventList";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-
+import { EventSection } from "../components/HomePage/EventSection";
 function HomePage() {
   const [mostActiveUsers, setMostActiveUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(0);
@@ -31,7 +31,6 @@ function HomePage() {
           "http://localhost:5000/upComingEvents",
           { email: email }
         );
-        console.log(eventRes.data);
         setAllEvents(eventRes.data);
       } catch (error) {
         alert("Error: " + error);
@@ -44,13 +43,14 @@ function HomePage() {
   return (
     <div className="homePage">
       <Header />
+      <EventSection />
       <div className="homeContainer">
+        <EventList events={events} navigate={navigate} />
         <UserList
           mostActiveUsers={mostActiveUsers}
           selectedUser={selectedUser}
           setSelectedUser={setSelectedUser}
         />
-        <EventList events={events} navigate={navigate} />
       </div>
       <Footer />
     </div>

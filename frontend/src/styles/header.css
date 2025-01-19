@@ -1,13 +1,11 @@
 @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
 
 .homePage-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 5%;
-  background-color: rgb(15, 15, 15);
-  box-shadow: 0 2px 4px rgba(40, 40, 40, 0.2);
-  width: 100%;
+  width: 80vw;
   min-height: 10vh;
 }
 
@@ -19,7 +17,7 @@
 
 .homePage-header input {
   width: 15vw;
-  height: 4vh;
+  height: 3.5vh;
   font-size: 1rem;
 }
 
@@ -32,16 +30,19 @@
   display: flex;
   gap: 20px;
   list-style: none;
+  align-items: center;
   margin: 0;
   padding: 0;
 }
 
 .homePage-navigation a {
-  font-family: "Roboto", sans-serif;
   text-decoration: none;
   color: rgb(234, 234, 234);
   font-size: 1rem;
+  font-family: "Inter";
+  font-style: normal;
   font-weight: 500;
+  letter-spacing: -0.04em;
 }
 
 .homePage-navigation a:hover {
@@ -54,20 +55,41 @@
   flex-direction: column;
   align-items: center;
   margin-left: 80px;
+  padding: 0.5vh 0.25vw;
+  border-radius: 20px;
+  border-color: 2px solid white;
+  background-color: rgb(68, 68, 68);
 }
 
 .search-input {
   width: auto;
   max-width: 400px;
-  padding: 10px 15px;
+  padding: 5px 10px;
   font-size: 16px;
+  font-family: "Inter";
+  font-style: normal;
+  letter-spacing: -0.04em;
   border: 1px groove #ccc;
   color: white;
   background-color: transparent;
-  border-radius: 4px;
+  border-radius: 16px;
+  border: none;
   box-sizing: border-box;
 }
 
+.search-input:focus {
+  outline: none;
+  border: none;
+}
+
+.search-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.7em;
+  border-radius: 100%;
+  background-color: rgb(30, 30, 30);
+}
 .search-results {
   position: absolute;
   display: flex;
@@ -124,4 +146,26 @@
   font-size: 14px;
   color: #888;
   text-align: center;
+}
+
+.logout-button {
+  display: flex;
+  width: 6vw;
+  height: 3.5vh;
+  align-items: center;
+  justify-content: center;
+  border-radius: 14px;
+  background-color: white;
+  cursor: pointer;
+}
+
+.logout-button:hover {
+  transform: scale(1.02);
+}
+.logout-button a {
+  color: black;
+}
+
+.logout-button a:hover {
+  text-decoration: none;
 }
