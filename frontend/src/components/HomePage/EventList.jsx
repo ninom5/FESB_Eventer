@@ -62,7 +62,7 @@ function EventList({ events, navigate }) {
   else if (screendWidth >= 800 && screendWidth < 1100)
     settings.slidesToShow = 4;
   return (
-    <div className="events-container">
+    <div className="home-events-container">
       <h3>Upcoming events</h3>
       <div className="upcomingEvents-container">
         <Slider {...settings}>
