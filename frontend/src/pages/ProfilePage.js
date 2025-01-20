@@ -5,7 +5,7 @@ import Header from "../components/Header";
 import ProfileContainer from "../components/ProfilePage/ProfileContainer";
 
 function ProfilePage() {
-  const { email } = useParams(); 
+  const { email } = useParams();
   const [userData, setUserData] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [updatedData, setUpdatedData] = useState({});
@@ -53,10 +53,6 @@ function ProfilePage() {
 
     userEvents();
   }, [userData]);
-
-  const handleEdit = () => {
-    setIsEditing(true);
-  };
 
   const handleEdit = () => setIsEditing(true);
   const handleCancel = () => {
