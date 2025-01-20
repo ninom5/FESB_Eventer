@@ -1,7 +1,6 @@
-import { LoadScript, Autocomplete } from "@react-google-maps/api";
-import { useState, userMemo } from "react";
+import { Autocomplete } from "@react-google-maps/api";
+import { useState } from "react";
 import noUserPicture from "../../assets/noPlayerIcon.svg";
-import thompson from "../../assets/thompson.jpg";
 import { useNavigate } from "react-router-dom";
 
 function ProfileContainer({
@@ -14,7 +13,7 @@ function ProfileContainer({
   handleSave,
   handleCancel,
   handleEdit,
-  events,
+  canEdit,
 }) {
   const [autocomplete, setAutocomplete] = useState(null);
   const [userLocation, setUserLocation] = useState("");
@@ -84,15 +83,17 @@ function ProfileContainer({
                 Sign in & security
               </button>
             </li>
-            <li>
-              <button onClick={() => navigate("/myevents")}>My events</button>
-            </li>
+            {canEdit ? (
+              <li>
+                <button onClick={() => navigate("/myevents")}>My events</button>
+              </li>
+            ) : null}
           </ul>
         </nav>
       </div>
       <div className="profile-container">
         <div id="profile" className="profile-data">
-          <img src={thompson} alt="Profile" />
+          <img src={noUserPicture} alt="Profile" />
           <h3>Your information</h3>
           <div className="information-container">
             <div className="profileField">
@@ -197,22 +198,24 @@ function ProfileContainer({
               )}
             </div>
           </div>
-          <div className="profile-actions">
-            {isEditing ? (
-              <>
-                <button onClick={handleSave} className="saveButton">
-                  Save Changes
+          {canEdit ? (
+            <div className="profile-actions">
+              {isEditing ? (
+                <>
+                  <button onClick={handleSave} className="saveButton">
+                    Save Changes
+                  </button>
+                  <button onClick={handleCancel} className="cancelButton">
+                    Cancel
+                  </button>
+                </>
+              ) : (
+                <button onClick={handleEdit} className="editButton">
+                  Edit Profile
                 </button>
-                <button onClick={handleCancel} className="cancelButton">
-                  Cancel
-                </button>
-              </>
-            ) : (
-              <button onClick={handleEdit} className="editButton">
-                Edit Profile
-              </button>
-            )}
-          </div>
+              )}
+            </div>
+          ) : null}
         </div>
         <div id="signIn" className="signin-container">
           <h3>Sign in</h3>
@@ -222,18 +225,11 @@ function ProfileContainer({
               <p>{userData.email}</p>
             </div>
             <div className="profileField">
-              <label>Status</label>
+              <label>Role</label>
               <p>{userData.tkorisnika}</p>
             </div>
           </div>
         </div>
-        {/* <div className="events-container" id="my-events">
-            <h3>Your events</h3>
-            <ul></ul>
-            {events.map((event) => (
-              <li>{event.naziv}</li> //dodat komponentu za listu dogadaja
-            ))}
-          </div> */}
       </div>
     </div>
   );

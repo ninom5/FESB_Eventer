@@ -47,9 +47,6 @@
 
 .homePage-navigation a:hover {
   text-decoration: underline;
-  /* background-image: linear-gradient(to right, blue, red);
-  -webkit-background-clip: text;
-  color: transparent; */
 }
 
 .search-bar-container {
@@ -171,4 +168,8 @@
 
 .logout-button a:hover {
   text-decoration: none;
+}
+
+.header-profile-link {
+  cursor: pointer;
 }

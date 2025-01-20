@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 import axios from "axios";
 import Header from "../components/Header";
 import ProfileContainer from "../components/ProfilePage/ProfileContainer";
@@ -10,7 +10,9 @@ function ProfilePage() {
   const [isEditing, setIsEditing] = useState(false);
   const [updatedData, setUpdatedData] = useState({});
   const [cities, setCities] = useState([]);
-  const [events, setEvents] = useState([]);
+
+  const location = useLocation();
+  const canEdit = location.state.canEdit;
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -39,23 +41,6 @@ function ProfilePage() {
       });
   }, [email]);
 
-  useEffect(() => {
-    if (userData && userData.korisnik_id) {
-      const userEvents = async () => {
-        try {
-          const response = await axios.get(
-            `http://localhost:5000/events?korisnik_id=${userData.korisnik_id}`
-          );
-          setEvents(response.data);
-        } catch (error) {
-          console.error("Error fetching events: " + error);
-        }
-      };
-
-      userEvents();
-    }
-  }, [userData]);
-
   const handleEdit = () => setIsEditing(true);
   const handleCancel = () => {
     setIsEditing(false);
@@ -70,7 +55,10 @@ function ProfilePage() {
 
     try {
       const response = await axios.get("http://localhost:5000/checkUsername", {
-        params: { username: updatedData.username },
+        params: {
+          username: updatedData.username,
+          currentUserId: userData.korisnik_id,
+        },
       });
 
       if (response.data === "Username already exists.") {
@@ -103,7 +91,7 @@ function ProfilePage() {
           handleCancel={handleCancel}
           handleSave={handleSave}
           handleEdit={handleEdit}
-          events={events}
+          canEdit={canEdit}
         />
       </div>
     </div>
