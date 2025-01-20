@@ -62,6 +62,7 @@ function Header() {
         <div>
           <input
             className="search-input"
+            autoComplete="off"
             onChange={(e) => {
               setSearchValue(e.target.value);
               handleSearch();
@@ -115,7 +116,7 @@ function Header() {
                         setShowResults(false);
                       }}
                     >
-                      {user.naziv}
+                      {user.naziv} - {user.email}
                     </li>
                   ))}
                 </ul>
