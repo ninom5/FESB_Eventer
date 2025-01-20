@@ -53,15 +53,19 @@ function ProfilePage() {
   }, []);
 
   useEffect(() => {
-    axios
-      .get(`http://localhost:5000/events?korisnik_id=${userData.korisnik_id}`)
-      .then((response) => {
+    const userEvents = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:5000/events?korisnik_id=${userData.korisnik_id}`
+        );
         setEvents(response.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching data: ", error);
-      });
-  }, [userData.korisnik_id]);
+      } catch (error) {
+        console.error("error fetching events: " + error);
+      }
+    };
+
+    userEvents();
+  }, [userData]);
 
   const handleEdit = () => {
     setIsEditing(true);
