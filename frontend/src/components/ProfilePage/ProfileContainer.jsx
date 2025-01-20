@@ -2,7 +2,7 @@ import { LoadScript, Autocomplete } from "@react-google-maps/api";
 import { useState, userMemo } from "react";
 import noUserPicture from "../../assets/noPlayerIcon.svg";
 import thompson from "../../assets/thompson.jpg";
-import {useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 function ProfileContainer({
   isEditing,
@@ -54,7 +54,6 @@ function ProfileContainer({
   };
 
   const navigate = useNavigate();
-  
 
   return (
     <div className="profile-page-container">
@@ -86,20 +85,14 @@ function ProfileContainer({
               </button>
             </li>
             <li>
-              <button
-                onClick={ () => navigate("/myevents")}
-              >
-                My events
-              </button>
+              <button onClick={() => navigate("/myevents")}>My events</button>
             </li>
           </ul>
         </nav>
       </div>
       <div className="profile-container">
-        <div className="profile-image">
-          <img src={thompson} alt="Profile" />
-        </div>
         <div id="profile" className="profile-data">
+          <img src={thompson} alt="Profile" />
           <h3>Your information</h3>
           <div className="information-container">
             <div className="profileField">

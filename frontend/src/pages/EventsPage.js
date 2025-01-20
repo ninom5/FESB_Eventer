@@ -59,7 +59,7 @@ function EventsPage() {
       .catch((error) => {
         console.error("Error fetching user ID:", error);
       });
-
+      
     getEvents();
   }, []);
 
@@ -82,6 +82,7 @@ function EventsPage() {
 
   const handleButtonClick = () => {
     setSelectedEvent(null);
+    setEventLocation("");
     setShowForm((prev) => !prev);
     setButtonText((prevText) =>
       prevText === "Add event" ? "Cancel" : "Add event"
@@ -170,6 +171,7 @@ function EventsPage() {
     setEventLocation(place.formatted_address || "");
   };
 
+  console.log(selectedEvent);
   return (
     <div className="eventsPage">
       <Header />
