@@ -42,11 +42,12 @@ function EventForm({
             date: "",
             startTime: "",
             description: "",
-            city: "",
             street: "",
-            userId: null,
+            userId: eventData.userId,
             charCount: setCharCount(0),
           });
+          
+          setEventLocation("");
 
           getEvents();
         } else {
@@ -90,9 +91,9 @@ function EventForm({
           <input
             type="date"
             name="date"
-            value={eventData.date}
+            value={eventData.date || ""}
             onChange={handleInputChange}
-            required
+            // required
           />
         </label>
         <label style={{ width: "45%" }}>
@@ -112,6 +113,7 @@ function EventForm({
           <Autocomplete
             onLoad={handleAutocompleteLoad}
             options={{ componentRestrictions: { country: "HR" } }}
+            value={eventLocation}
             onPlaceChanged={handlePlaceChanged}
           >
             <input

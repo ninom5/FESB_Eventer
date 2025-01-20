@@ -6,6 +6,17 @@
   min-height: 100vh;
 }
 
+.created-events{
+  display: flex;
+  flex-direction: column;
+}
+.created-events h2{
+  color: white;
+  text-align: center;
+  font-size: 40px;
+  margin-top: 50px;
+}
+
 .events-list {
   display: flex;
   flex-direction: row;
@@ -163,6 +174,23 @@ textarea {
 }
 select {
   border-radius: 4px;
+}
+
+.confirmed-events{
+  display: flex;
+  flex-direction: column;
+}
+.confirmed-events h2{
+  color: white;
+  text-align: center;
+  font-size: 40px;
+  margin-top: 30px;
+}
+.confirmed-events-list{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
 }
 
 @media (max-width: 768px) {
