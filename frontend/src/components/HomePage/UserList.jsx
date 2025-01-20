@@ -1,7 +1,9 @@
 import noUserPicture from "../../assets/noPlayerIcon.svg";
 import { useNavigate } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faLocationArrow } from "@fortawesome/free-solid-svg-icons";
 
-function UserList({ mostActiveUsers}) {
+function UserList({ mostActiveUsers }) {
   const navigate = useNavigate();
 
   return (
@@ -10,7 +12,15 @@ function UserList({ mostActiveUsers}) {
       <div className="homeUsers">
         {mostActiveUsers?.map((item, index) => {
           return (
-            <li key={index} className="homeUserCard">
+            <li
+              key={index}
+              className="homeUserCard"
+              onClick={() => {
+                navigate(`/profile/${item.email}`, {
+                  state: { canEdit: false },
+                });
+              }}
+            >
               <div className="homeUserCardProfile">
                 <img src={noUserPicture} />
                 <div className="homeUserCardProfileText">
@@ -26,7 +36,7 @@ function UserList({ mostActiveUsers}) {
                 </div>
               </div>
               <div className="homeUserCardData">
-                <div>
+                <div className="homeUserCardDataDiv">
                   <p
                     style={{
                       marginTop: "1vh",
@@ -34,7 +44,7 @@ function UserList({ mostActiveUsers}) {
                       fontWeight: "500",
                     }}
                   >
-                    {item.tkorisnika === "Korisnik"
+                    {item.tkorisnika === "user"
                       ? "NEXT ATTENDING EVENT"
                       : "UPCOMING EVENT"}
                   </p>
@@ -42,23 +52,21 @@ function UserList({ mostActiveUsers}) {
                     {item.sljedeci}
                   </p>
                   <p style={{ color: "gray", fontWeight: "500" }}>
-                    {item.tkorisnika === "Korisnik"
+                    {item.tkorisnika === "user"
                       ? "No. ATTENDED EVENTS"
                       : "No. ORGANISED EVENTS"}
                   </p>
                   <p style={{ color: "white" }}>{item.brojdogadaja}</p>
                 </div>
-                <button
-                  className="addEventButton"
+                <div
+                  className="home-user-card-button"
                   style={{ width: "100%", margin: "0" }}
-                  onClick={() => {
-                    navigate(`/profile/${item.email}`, {
-                      state: { canEdit: false },
-                    });
-                  }}
                 >
-                  See more
-                </button>
+                  <div className="home-user-card-icon">
+                    <FontAwesomeIcon icon={faLocationArrow} color="black" />
+                  </div>
+                  <p>See more</p>
+                </div>
               </div>
             </li>
           );

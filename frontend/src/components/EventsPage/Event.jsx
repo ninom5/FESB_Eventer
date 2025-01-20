@@ -4,6 +4,7 @@ import axios from "axios";
 import {
   faMapMarkerAlt,
   faChevronDown,
+  faTrashCan,
 } from "@fortawesome/free-solid-svg-icons";
 import { ToastContainer, toast } from "react-toast";
 import velvetLogo from "../../assets/velvetLogo.jpg";
@@ -189,12 +190,13 @@ export function Event({ event, setEvent, getEvents, events, showForm }) {
               </div>
             )}
             {isAdmin && (
-              <button
+              <div
                 className="delete-user-button"
                 onClick={() => handleDeleteUser(event.korisnik_id)}
               >
                 Delete User
-              </button>
+                <FontAwesomeIcon icon={faTrashCan} color="white" />
+              </div>
             )}
           </>
         )}

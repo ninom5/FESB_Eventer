@@ -7,6 +7,7 @@ import {
 import {
   faCircleCheck as solidCircleCheck,
   faMapMarkerAlt,
+  faTrashCan,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
@@ -60,12 +61,13 @@ export function Details({
               <div className="event-desc-footer">
                 <p>No. attendees: {event?.broj_posjetitelja}</p>
                 {isAdmin && (
-                  <button
+                  <div
                     className="delete-event-button"
                     onClick={() => handleDeleteEvent(event.dogadaj_id)}
                   >
                     Delete Event
-                  </button>
+                    <FontAwesomeIcon icon={faTrashCan} color="white" />
+                  </div>
                 )}
               </div>
             </div>

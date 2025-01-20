@@ -59,7 +59,7 @@ function EventsPage() {
       .catch((error) => {
         console.error("Error fetching user ID:", error);
       });
-      
+
     getEvents();
   }, []);
 
@@ -199,8 +199,7 @@ function EventsPage() {
           setEventLocation={setEventLocation}
           charCount={charCount}
           showForm={showForm}
-          setShowForm={setShowForm}
-          setButtonText={setButtonText}
+          handleButtonClick={handleButtonClick}
           setCharCount={setCharCount}
           mapRef={mapRef}
         />

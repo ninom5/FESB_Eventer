@@ -222,34 +222,27 @@ textarea::-webkit-scrollbar-thumb {
   color: white;
 }
 
-.delete-event-button {
+.delete-event-button,
+.delete-user-button {
+  display: flex;
+  gap: 0.4vw;
+  align-items: center;
   color: white;
-  background-color: rgba(16, 16, 16, 0.934);
-  border: 3px solid white;
-  padding: 5px;
-  border-radius: 5px;
-  font-weight: 900;
+  background-color: transparent;
+  padding: 5px 10px;
+  border-radius: 14px;
+  font-weight: 500;
   margin-bottom: 5px;
+  transition: all 0.5s ease;
 }
 
 .delete-user-button {
-  color: white;
-  background-color: rgba(16, 16, 16, 0.934);
-  border: 3px solid white;
-  padding: 5px;
-  border-radius: 5px;
-  font-weight: 900;
+  margin-bottom: 0;
 }
 
+.delete-event-button:hover,
 .delete-user-button:hover {
-  background-color: white;
-  color: black;
-  cursor: pointer;
-}
-
-.delete-event-button:hover {
-  background-color: white;
-  color: black;
+  background-color: rgba(16, 16, 16, 0.934);
   cursor: pointer;
 }
 

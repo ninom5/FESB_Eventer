@@ -1,4 +1,5 @@
 import { Autocomplete } from "@react-google-maps/api";
+import { ToastContainer, toast } from "react-toast";
 import axios from "axios";
 
 function EventForm({
@@ -11,8 +12,7 @@ function EventForm({
   eventLocation,
   setEventLocation,
   showForm,
-  setShowForm,
-  setButtonText,
+  handleButtonClick,
   charCount,
   setCharCount,
   mapRef,
@@ -32,10 +32,7 @@ function EventForm({
       .then((response) => {
         const data = response.data;
         if (data === "Event inserted successfully.") {
-          alert(data);
-
-          setShowForm(false);
-          setButtonText("Add event");
+          handleButtonClick();
 
           setEventData({
             eventName: "",
@@ -46,12 +43,13 @@ function EventForm({
             userId: eventData.userId,
             charCount: setCharCount(0),
           });
-          
+
           setEventLocation("");
 
+          toast.success(data);
           getEvents();
         } else {
-          alert(data);
+          toast.error(data);
         }
       })
       .catch((error) => {
@@ -65,87 +63,90 @@ function EventForm({
   };
 
   return (
-    <form
-      className={`newEventForm ${showForm ? "" : "hidden"}`}
-      onSubmit={handleSubmit}
-    >
-      <label>
-        Event name:
-        <input
-          type="text"
-          name="eventName"
-          value={eventData.eventName}
-          onChange={handleInputChange}
-          required
-        />
-      </label>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          width: "100%",
-        }}
+    <>
+      <ToastContainer delay={3000} />
+      <form
+        className={`newEventForm ${showForm ? "" : "hidden"}`}
+        onSubmit={handleSubmit}
       >
-        <label style={{ width: "45%" }}>
-          Date:
+        <label>
+          Event name:
           <input
-            type="date"
-            name="date"
-            value={eventData.date || ""}
-            onChange={handleInputChange}
-            // required
-          />
-        </label>
-        <label style={{ width: "45%" }}>
-          Time:
-          <input
-            type="time"
-            name="startTime"
-            value={eventData.startTime}
+            type="text"
+            name="eventName"
+            value={eventData.eventName}
             onChange={handleInputChange}
             required
           />
         </label>
-      </div>
-      <label>
-        Location:
-        {showForm && (
-          <Autocomplete
-            onLoad={handleAutocompleteLoad}
-            options={{ componentRestrictions: { country: "HR" } }}
-            value={eventLocation}
-            onPlaceChanged={handlePlaceChanged}
-          >
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            width: "100%",
+          }}
+        >
+          <label style={{ width: "45%" }}>
+            Date:
             <input
-              type="text"
-              name="street"
-              value={eventLocation}
-              onChange={(e) => setEventLocation(e.target.value)}
+              type="date"
+              name="date"
+              value={eventData.date || ""}
+              onChange={handleInputChange}
+              // required
+            />
+          </label>
+          <label style={{ width: "45%" }}>
+            Time:
+            <input
+              type="time"
+              name="startTime"
+              value={eventData.startTime}
+              onChange={handleInputChange}
               required
             />
-          </Autocomplete>
-        )}
-      </label>
-      <label>
-        Description:
-        <div className="descriptionContainer">
-          <textarea
-            id="description"
-            name="description"
-            value={eventData.description}
-            onChange={handleInputChange}
-            required
-            maxLength={maxLength}
-          />
-          <div className="charCount">
-            {charCount} / {maxLength}
-          </div>
+          </label>
         </div>
-      </label>
-      <button type="submit" style={{ marginTop: "10px" }}>
-        Submit
-      </button>
-    </form>
+        <label>
+          Location:
+          {showForm && (
+            <Autocomplete
+              onLoad={handleAutocompleteLoad}
+              options={{ componentRestrictions: { country: "HR" } }}
+              value={eventLocation}
+              onPlaceChanged={handlePlaceChanged}
+            >
+              <input
+                type="text"
+                name="street"
+                value={eventLocation}
+                onChange={(e) => setEventLocation(e.target.value)}
+                required
+              />
+            </Autocomplete>
+          )}
+        </label>
+        <label>
+          Description:
+          <div className="descriptionContainer">
+            <textarea
+              id="description"
+              name="description"
+              value={eventData.description}
+              onChange={handleInputChange}
+              required
+              maxLength={maxLength}
+            />
+            <div className="charCount">
+              {charCount} / {maxLength}
+            </div>
+          </div>
+        </label>
+        <button type="submit" style={{ marginTop: "10px" }}>
+          Submit
+        </button>
+      </form>
+    </>
   );
 }
 

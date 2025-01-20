@@ -6,6 +6,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { EventSection } from "../components/HomePage/EventSection";
+import { ProfileSection } from "../components/HomePage/ProfileSection";
 
 function HomePage() {
   const [mostActiveUsers, setMostActiveUsers] = useState([]);
@@ -40,16 +41,14 @@ function HomePage() {
     fetchData();
   }, []);
 
-
   return (
     <div className="homePage">
       <Header />
       <EventSection />
+      <ProfileSection />
       <div className="homeContainer">
         <EventList events={events} navigate={navigate} />
-        <UserList
-          mostActiveUsers={mostActiveUsers}
-        />
+        <UserList mostActiveUsers={mostActiveUsers} />
       </div>
       <Footer />
     </div>
