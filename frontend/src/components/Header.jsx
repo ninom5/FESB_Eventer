@@ -53,8 +53,6 @@ function Header() {
     };
   }, []);
 
-  console.log(results);
-
   return (
     <header className="homePage-header">
       <div className="header-logo">
