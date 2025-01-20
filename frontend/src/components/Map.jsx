@@ -16,10 +16,21 @@ function Map({
   setSelectedEvent,
 }) {
   const [mapEvents, setMapEvents] = useState(null);
+  const [marker, setMarker] = useState(null);
+  const [selectedEventMap, setSelectedEventMap] = useState(null);
 
   useEffect(() => {
     if (events) setMapEvents(events);
   }, [events]);
+
+  useEffect(() => {
+    if (selectedEvent) setSelectedEventMap(selectedEvent);
+    else setSelectedEventMap(null);
+  }, [selectedEvent]);
+
+  useEffect(() => {
+    if (markerPosition) setMarker(markerPosition);
+  }, [markerPosition]);
 
   return (
     <GoogleMap
@@ -33,10 +44,13 @@ function Map({
         mapTypeControl: false,
         mapId: "2dccd7b6ea472154",
       }}
-      onClick={() => setSelectedEvent(null)}
+      onClick={() => {
+        setSelectedEvent(null);
+        setSelectedEventMap(null);
+      }}
     >
       {showForm
-        ? markerPosition && <Marker position={markerPosition} />
+        ? marker && <Marker position={marker} />
         : mapEvents?.map((event, index) => (
             <Marker
               key={index}
@@ -62,17 +76,20 @@ function Map({
               }}
             />
           ))}
-      {selectedEvent && (
+      {selectedEventMap && (
         <InfoWindow
           position={{
-            lat: parseFloat(selectedEvent?.latitude),
-            lng: parseFloat(selectedEvent?.longitude),
+            lat: parseFloat(selectedEventMap.latitude),
+            lng: parseFloat(selectedEventMap.longitude),
           }}
-          onCloseClick={() => setSelectedEvent(null)}
+          onCloseClick={() => {
+            setSelectedEvent(null);
+            setSelectedEventMap(null);
+          }}
         >
           <div>
             <strong style={{ fontSize: "1.4em" }}>
-              {selectedEvent?.naziv}
+              {selectedEventMap?.naziv}
             </strong>
             <p
               style={{
@@ -81,9 +98,9 @@ function Map({
                 marginBottom: "1vh",
               }}
             >
-              {selectedEvent?.vrijeme}
+              {selectedEventMap?.vrijeme}
             </p>
-            <div className="event-adress">{selectedEvent?.adresa}</div>
+            <div className="event-adress">{selectedEventMap?.adresa}</div>
           </div>
         </InfoWindow>
       )}
