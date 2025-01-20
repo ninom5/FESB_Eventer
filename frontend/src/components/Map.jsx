@@ -45,7 +45,7 @@ function Map({
         mapId: "2dccd7b6ea472154",
       }}
       onClick={() => {
-        setSelectedEvent(null);
+        if (selectedEvent !== undefined) setSelectedEvent(null);
         setSelectedEventMap(null);
       }}
     >
