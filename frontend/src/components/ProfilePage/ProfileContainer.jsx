@@ -186,6 +186,20 @@ function ProfileContainer({
                   onLoad={handleAutocompleteLoad}
                   onPlaceChanged={handlePlaceChanged}
                 >
+                  My events
+                </button>
+              </li>
+            </ul>
+          </nav>
+        </div>
+        <div className="profile-container">
+          <div id="profile" className="profile-data">
+            <img src={thompson} alt="Profile" />
+            <h3>Your information</h3>
+            <div className="information-container">
+              <div className="profileField">
+                <label>First name </label>
+                {isEditing ? (
                   <input
                     type="text"
                     name="street"

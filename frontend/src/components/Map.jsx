@@ -84,11 +84,6 @@ function Map({
               {selectedEvent?.vrijeme}
             </p>
             <div className="event-adress">{selectedEvent?.adresa}</div>
-            <div className="event-url">
-              <a href="/myEvents" target="_blank">
-                See more details
-              </a>
-            </div>
           </div>
         </InfoWindow>
       )}
