@@ -739,17 +739,22 @@ app.get("/getEventStatusId", async (req, res) => {
 });
 
 app.get("/getEventById", async (req, res) => {
-  const eventId = req.query;
+  const { dogadaj_id } = req.query;
+
   const eventByIdSql = "SELECT * from dogadaji WHERE dogadaj_id = $1";
 
-  const result = await client.query(eventByIdSql, [eventId]);
+  try {
+    const result = await client.query(eventByIdSql, [dogadaj_id]);
 
-  if (result.rowCount <= 0)
-    return res.json({
-      message: "Error getting event",
-    });
+    if (result.rowCount <= 0)
+      return res.json({
+        message: "Error getting event",
+      });
 
-  return res.json(statusResult.rows[0]);
+    return res.json(result.rows[0]);
+  } catch (error) {
+    console.error("Error getting event by ID:", error);
+  }
 });
 
 app.listen(5000, () => {

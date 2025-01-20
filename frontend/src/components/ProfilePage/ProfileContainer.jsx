@@ -2,6 +2,7 @@ import { LoadScript, Autocomplete } from "@react-google-maps/api";
 import { useState, userMemo } from "react";
 import noUserPicture from "../../assets/noPlayerIcon.svg";
 import thompson from "../../assets/thompson.jpg";
+import {useNavigate} from "react-router-dom";
 
 function ProfileContainer({
   isEditing,
@@ -52,6 +53,9 @@ function ProfileContainer({
     }
   };
 
+  const navigate = useNavigate();
+  
+
   return (
     <div className="profile-page-container">
       <div className="sidebar-container">
@@ -83,11 +87,7 @@ function ProfileContainer({
             </li>
             <li>
               <button
-                onClick={() =>
-                  document
-                    .getElementById("my-events")
-                    .scrollIntoView({ behavior: "smooth" })
-                }
+                onClick={ () => navigate("/myevents")}
               >
                 My events
               </button>

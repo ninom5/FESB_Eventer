@@ -40,7 +40,7 @@ function MyEvents() {
     const userConfirmedComing = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000//userConfirmedEvents?korisnik_id=${userId}`
+          `http://localhost:5000/userConfirmedEvents?korisnik_id=${userId}`
         );
 
         setConfirmedEvents(response.data);
@@ -57,7 +57,7 @@ function MyEvents() {
       try {
         const event = confirmedEvents.map((confirmedEvent) =>
           axios.get(
-            `http://localhost:5000//getEventById?dogadaj_id=${confirmedEvent.dogadaj_id}`
+            `http://localhost:5000/getEventById?dogadaj_id=${confirmedEvent.dogadaj_id}`
           )
         );
 
@@ -65,13 +65,13 @@ function MyEvents() {
         const eventDetails = eventResponse.map((response) => response.data);
 
         setFilteredConfirmedEvents(eventDetails);
-        console.log("aaaaa: " + eventDetails); //ne radidiadiid
+        console.log("Confirmed events:", eventDetails);
       } catch (error) {
-        console.error("Error filtered confirmed events:" + error);
+        console.error("Error getting confirmed events:", error);
       }
-
-      fetchConfirmedEvents();
     };
+
+    if (confirmedEvents.length > 0) fetchConfirmedEvents();
   }, [confirmedEvents]);
 
   if (!events) return <div>Loading...</div>;
@@ -81,7 +81,12 @@ function MyEvents() {
       <Header />
 
       <EventsList events={events} />
-      {/* <ConfirmedEvents events={filteredConfirmedEvents} /> */}
+
+      {filteredConfirmedEvents.length > 0 ? (
+        <ConfirmedEvents events={filteredConfirmedEvents} />
+      ) : (
+        <div className="no-events">No upcoming events marked as coming</div>
+      )}
 
       <Footer />
     </div>
