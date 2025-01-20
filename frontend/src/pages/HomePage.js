@@ -9,7 +9,6 @@ import { EventSection } from "../components/HomePage/EventSection";
 
 function HomePage() {
   const [mostActiveUsers, setMostActiveUsers] = useState([]);
-  const [selectedUser, setSelectedUser] = useState(0);
   const [events, setAllEvents] = useState([]);
   const navigate = useNavigate();
 
@@ -50,8 +49,6 @@ function HomePage() {
         <EventList events={events} navigate={navigate} />
         <UserList
           mostActiveUsers={mostActiveUsers}
-          selectedUser={selectedUser}
-          setSelectedUser={setSelectedUser}
         />
       </div>
       <Footer />

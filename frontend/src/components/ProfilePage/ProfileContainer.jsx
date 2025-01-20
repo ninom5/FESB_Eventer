@@ -2,6 +2,8 @@ import { Autocomplete } from "@react-google-maps/api";
 import { useState } from "react";
 import noUserPicture from "../../assets/noPlayerIcon.svg";
 import { useNavigate } from "react-router-dom";
+import ProfileActions from "./ProfileActions";
+import SidebarContainer from "./SidebarContainer";
 
 function ProfileContainer({
   isEditing,
@@ -56,41 +58,8 @@ function ProfileContainer({
 
   return (
     <div className="profile-page-container">
-      <div className="sidebar-container">
-        <nav>
-          <h3 className="sidebar-container__heading">General</h3>
-          <hr style={{ width: "90%", borderColor: "gray" }} />
-          <ul className="sidebar-list">
-            <li>
-              <button
-                onClick={() =>
-                  document
-                    .getElementById("profile")
-                    .scrollIntoView({ behavior: "smooth" })
-                }
-              >
-                Profile
-              </button>
-            </li>
-            <li>
-              <button
-                onClick={() =>
-                  document
-                    .getElementById("signIn")
-                    .scrollIntoView({ behavior: "smooth" })
-                }
-              >
-                Sign in & security
-              </button>
-            </li>
-            {canEdit ? (
-              <li>
-                <button onClick={() => navigate("/myevents")}>My events</button>
-              </li>
-            ) : null}
-          </ul>
-        </nav>
-      </div>
+      <SidebarContainer canEdit={canEdit} />
+
       <div className="profile-container">
         <div id="profile" className="profile-data">
           <img src={noUserPicture} alt="Profile" />
@@ -199,22 +168,12 @@ function ProfileContainer({
             </div>
           </div>
           {canEdit ? (
-            <div className="profile-actions">
-              {isEditing ? (
-                <>
-                  <button onClick={handleSave} className="saveButton">
-                    Save Changes
-                  </button>
-                  <button onClick={handleCancel} className="cancelButton">
-                    Cancel
-                  </button>
-                </>
-              ) : (
-                <button onClick={handleEdit} className="editButton">
-                  Edit Profile
-                </button>
-              )}
-            </div>
+            <ProfileActions
+              isEditing={isEditing}
+              handleEdit={handleEdit}
+              handleSave={handleSave}
+              handleCancel={handleCancel}
+            />
           ) : null}
         </div>
         <div id="signIn" className="signin-container">

@@ -1,7 +1,7 @@
 import noUserPicture from "../../assets/noPlayerIcon.svg";
 import { useNavigate } from "react-router-dom";
 
-function UserList({ mostActiveUsers, selectedUser, setSelectedUser }) {
+function UserList({ mostActiveUsers}) {
   const navigate = useNavigate();
 
   return (

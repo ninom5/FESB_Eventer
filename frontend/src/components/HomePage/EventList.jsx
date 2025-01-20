@@ -1,7 +1,6 @@
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import eventImage from "../../assets/event.jpg";
 import velvet from "../../assets/velvet.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
