@@ -4,12 +4,15 @@ import Footer from "../components/Footer";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import ConfirmedEvents from "../components/MyEventsPage/ConfirmedEventsList";
+import Loader from "../components/Loader";
 
 function MyEvents() {
   const [events, setEvents] = useState([]);
   const [confirmedEvents, setConfirmedEvents] = useState([]);
   const [filteredConfirmedEvents, setFilteredConfirmedEvents] = useState([]);
   const [userId, setUserId] = useState(0);
+
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const email = localStorage.getItem("email");
@@ -89,6 +92,8 @@ function MyEvents() {
       )}
 
       <Footer />
+
+      <Loader loading={loading} />
     </div>
   );
 }
