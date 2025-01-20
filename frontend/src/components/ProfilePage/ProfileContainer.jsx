@@ -100,10 +100,8 @@ function ProfileContainer({
           </nav>
         </div>
         <div className="profile-container">
-          <div className="profile-image">
-            <img src={thompson} alt="Profile" />
-          </div>
           <div id="profile" className="profile-data">
+            <img src={thompson} alt="Profile" />
             <h3>Your information</h3>
             <div className="information-container">
               <div className="profileField">
