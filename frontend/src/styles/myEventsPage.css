@@ -229,6 +229,10 @@ select {
   background-color: #777;
 }
 
+option{
+  color: black;
+}
+
 @media (max-width: 768px) {
   .event-card {
     width: 90%;
