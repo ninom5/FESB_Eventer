@@ -53,6 +53,8 @@ function Header() {
     };
   }, []);
 
+  console.log(results);
+
   return (
     <header className="homePage-header">
       <div className="header-logo">
@@ -110,7 +112,14 @@ function Header() {
                 <h4>Users</h4>
                 <ul>
                   {results.users.map((user) => (
-                    <li key={user.id} className="result-item">
+                    <li
+                      key={user.id}
+                      className="result-item"
+                      onClick={() => {
+                        navigate(`/profile/${user.email}`);
+                        setShowResults(false);
+                      }}
+                    >
                       {user.naziv}
                     </li>
                   ))}
@@ -127,7 +136,9 @@ function Header() {
       <nav className="homePage-navigation">
         <ul>
           <li>
-            <a href="/profile">Profile</a>
+            <a href={`/profile/${localStorage.getItem("email") || ""}`}>
+              Profile
+            </a>{" "}
           </li>
           <li>
             <a href="/events">Events</a>

@@ -1,23 +1,12 @@
 import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import axios from "axios";
 import Header from "../components/Header";
-import ProfileActions from "../components/ProfilePage/ProfileActions";
 import ProfileContainer from "../components/ProfilePage/ProfileContainer";
-import ProfilePicture from "../components/ProfilePage/ProfilePicture";
 
 function ProfilePage() {
-  const [userData, setUserData] = useState({
-    ime: "",
-    prezime: "",
-    username: "",
-    email: "",
-    telefon: "",
-    status_Id: "",
-    mjesto_name: "",
-    ulica: "",
-    picture_url: "",
-  });
-
+  const { email } = useParams(); 
+  const [userData, setUserData] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [updatedData, setUpdatedData] = useState({});
   const [cities, setCities] = useState([]);
@@ -29,8 +18,6 @@ function ProfilePage() {
   };
 
   useEffect(() => {
-    const email = localStorage.getItem("email");
-
     axios
       .get(`http://localhost:5000/user?email=${email}`)
       .then((response) => {
@@ -50,35 +37,30 @@ function ProfilePage() {
       .catch((error) => {
         console.error("Error fetching cities:", error);
       });
-  }, []);
+  }, [email]);
 
   useEffect(() => {
-    axios
-      .get(`http://localhost:5000/events?korisnik_id=${userData.korisnik_id}`)
-      .then((response) => {
-        setEvents(response.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching data: ", error);
-      });
-  }, [userData.korisnik_id]);
+    if (userData?.korisnik_id) {
+      axios
+        .get(`http://localhost:5000/events?korisnik_id=${userData.korisnik_id}`)
+        .then((response) => {
+          setEvents(response.data);
+        })
+        .catch((error) => {
+          console.error("Error fetching events: ", error);
+        });
+    }
+  }, [userData?.korisnik_id]);
 
-  const handleEdit = () => {
-    setIsEditing(true);
-  };
-
+  const handleEdit = () => setIsEditing(true);
   const handleCancel = () => {
     setIsEditing(false);
     setUpdatedData(userData);
   };
 
   const handleSave = async () => {
-    if (
-      updatedData.ime === "" ||
-      updatedData.prezime === "" ||
-      updatedData.username === ""
-    ) {
-      alert("Name, Surname and Username fields are required!");
+    if (!updatedData.ime || !updatedData.prezime || !updatedData.username) {
+      alert("Name, Surname, and Username fields are required!");
       return;
     }
 
@@ -96,7 +78,7 @@ function ProfilePage() {
       setUserData(updatedData);
       setIsEditing(false);
     } catch (error) {
-      console.error("Error saving data: " + error);
+      console.error("Error saving data: ", error);
       alert("Error updating data");
     }
   };
