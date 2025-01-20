@@ -27,19 +27,13 @@ app.post("/register", (req, res) => {
   const checkUsernameQuery = `SELECT * FROM korisnici_role WHERE username = $1`;
 
   client.query(checkEmailQuery, [req.body.email], (error, result) => {
-    if (error) {
-      return res.send("Error");
-    }
+    if (error) return res.send("Error");
 
-    if (result.rows.length > 0) {
-      return res.send("Email already exists");
-    }
+    if (result.rows.length > 0) return res.send("Email already exists");
 
-    if (req.body.password !== req.body.confirmPassword) {
+    if (req.body.password !== req.body.confirmPassword)
       return res.json("Passwords do not match");
-    }
 
-    // If email does not exist, check the username
     client.query(checkUsernameQuery, [req.body.username], (error, result) => {
       if (error) return res.send("Error");
 
@@ -48,7 +42,6 @@ app.post("/register", (req, res) => {
       if (req.body.username.toString().includes("@"))
         return res.send("username contains @");
 
-      // Both email and username are available, register the user
       const sql = `
         INSERT INTO korisnici_role (ime, prezime, username, email, sifra, tkorisnika)
         VALUES ($1, $2, $3, $4, $5, 'user')
@@ -76,7 +69,7 @@ app.post("/register", (req, res) => {
 });
 
 app.post("/login", (req, res) => {
-  const { input, password } = req.body;
+  const { input } = req.body;
 
   const isEmail = input.includes("@");
   const checkUserQuery = `SELECT * FROM korisnici_role WHERE ${
@@ -95,7 +88,6 @@ app.post("/login", (req, res) => {
 
       if (!isMatch) return res.json("Invalid username or password");
 
-      // Generate JWT token
       const Accesstoken = jwt.sign(
         {
           username: user.username,

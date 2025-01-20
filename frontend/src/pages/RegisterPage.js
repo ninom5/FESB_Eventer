@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+
 import axios from "axios";
 import HomePage from "../components/HomePage";
 import RegisterForm from "../components/RegisterForm/RegisterForm";
@@ -20,10 +21,8 @@ function RegisterPage() {
   });
 
   const handleSubmit = (e) => {
-    // Prevent the default form submission
     e.preventDefault();
 
-    // Send a POST request to register endpoint
     axios
       .post("http://localhost:5000/register", registerValues)
       .then((response) => {
