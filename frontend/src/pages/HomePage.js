@@ -6,6 +6,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { EventSection } from "../components/HomePage/EventSection";
+
 function HomePage() {
   const [mostActiveUsers, setMostActiveUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(0);
@@ -39,6 +40,7 @@ function HomePage() {
     };
     fetchData();
   }, []);
+
 
   return (
     <div className="homePage">

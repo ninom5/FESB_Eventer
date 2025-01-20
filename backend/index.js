@@ -333,11 +333,13 @@ app.post("/search", async (req, res) => {
     req.body.searchValue.trim() !== "" ? `%${req.body.searchValue}%` : "%";
 
   const sqlUsers = `
-    SELECT TRIM(KR.IME) || ' ' || TRIM(KR.PREZIME) as NAZIV, 
-           CASE 
-             WHEN KR.TKORISNIKA = 'Kreator' THEN M.NAZIV || ', ' || KR.ULICA 
-             ELSE NULL 
-           END AS ADRESA
+    SELECT 
+      TRIM(KR.IME) || ' ' || TRIM(KR.PREZIME) AS NAZIV, 
+      CASE 
+        WHEN KR.TKORISNIKA = 'user' THEN M.NAZIV || ', ' || KR.ULICA 
+        ELSE NULL 
+      END AS ADRESA,
+      KR.EMAIL
     FROM KORISNICI_ROLE KR
     LEFT JOIN MJESTA M ON M.MJESTO_ID = KR.MJESTO_ID
     WHERE (TRIM(KR.IME) || ' ' || TRIM(KR.PREZIME)) ILIKE $1
