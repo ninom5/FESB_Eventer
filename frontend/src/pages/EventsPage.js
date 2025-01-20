@@ -171,7 +171,6 @@ function EventsPage() {
     setEventLocation(place.formatted_address || "");
   };
 
-  console.log(selectedEvent);
   return (
     <div className="eventsPage">
       <Header />
