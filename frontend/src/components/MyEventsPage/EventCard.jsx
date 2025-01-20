@@ -260,23 +260,23 @@ function EventCard({ event, showButtons }) {
           <p className="no-coords">No valid coordinates available.</p>
         )}
 
-        {showButtons &&(
-        <div className="btn-div">
-          {isEditing ? (
-            <>
-              <button className="save-event-btn" onClick={handleSave}>
-                Save Changes
+        {showButtons && (
+          <div className="btn-div">
+            {isEditing ? (
+              <>
+                <button className="save-event-btn" onClick={handleSave}>
+                  Save Changes
+                </button>
+                <button className="cancel-event-btn" onClick={handleEditClick}>
+                  Cancel
+                </button>
+              </>
+            ) : (
+              <button className="edit-event-btn" onClick={handleEditClick}>
+                Edit event
               </button>
-              <button className="cancel-event-btn" onClick={handleEditClick}>
-                Cancel
-              </button>
-            </>
-          ) : (
-            <button className="edit-event-btn" onClick={handleEditClick}>
-              Edit event
-            </button>
-          )}
-        </div>
+            )}
+          </div>
         )}
       </div>
     </div>

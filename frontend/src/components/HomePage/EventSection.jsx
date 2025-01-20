@@ -1,4 +1,4 @@
-import homeSectionImage from "../../assets/homeSectionImage.png";
+import eventSectionImage from "../../assets/eventSectionImage.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 
@@ -26,7 +26,7 @@ export function EventSection() {
         </p>
       </div>
       <img
-        src={homeSectionImage}
+        src={eventSectionImage}
         style={{ width: "40vw", height: "auto" }}
         alt=""
       />
