@@ -1,4 +1,4 @@
-import "./index.css";
+import { LoadScript } from "@react-google-maps/api";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
@@ -7,7 +7,7 @@ import ProtectedRoute from "../src/ProtectedRoute";
 import ProfilePage from "./pages/ProfilePage";
 import EventsPage from "./pages/EventsPage";
 import MyEventsPage from "./pages/MyEventsPage";
-import { LoadScript } from "@react-google-maps/api";
+import "./index.css";
 
 const libraries = ["places"];
 

@@ -1,6 +1,9 @@
 import noUserPicture from "../../assets/noPlayerIcon.svg";
+import { useNavigate } from "react-router-dom";
 
 function UserList({ mostActiveUsers, selectedUser, setSelectedUser }) {
+  const navigate = useNavigate();
+
   return (
     <div className="user-list">
       <h3 style={{ color: "white" }}>Most active users</h3>
@@ -18,7 +21,7 @@ function UserList({ mostActiveUsers, selectedUser, setSelectedUser }) {
                     {item.email}
                   </p>
                   <p style={{ color: "gray" }}>
-                    {item.tkorisnika === "Korisnik" ? "User" : "Organiser"}
+                    {item.tkorisnika === "user" ? "Organiser" : "Admin"}
                   </p>
                 </div>
               </div>
@@ -48,6 +51,9 @@ function UserList({ mostActiveUsers, selectedUser, setSelectedUser }) {
                 <button
                   className="addEventButton"
                   style={{ width: "100%", margin: "0" }}
+                  onClick={() => {
+                    navigate(`/profile/${item.email}`);
+                  }}
                 >
                   See more
                 </button>

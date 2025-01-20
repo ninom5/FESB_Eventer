@@ -1,12 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import headerLogo from "../assets/headerLogo.jpg";
-import {
-  faSearch,
-  faPartyHorn,
-  faCircleUser,
-} from "@fortawesome/free-solid-svg-icons";
-import { Link } from "react-router-dom";
+import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
@@ -110,7 +105,14 @@ function Header() {
                 <h4>Users</h4>
                 <ul>
                   {results.users.map((user) => (
-                    <li key={user.id} className="result-item">
+                    <li
+                      key={user.id}
+                      className="result-item"
+                      onClick={() => {
+                        navigate(`/profile/${user.email}`);
+                        setShowResults(false);
+                      }}
+                    >
                       {user.naziv}
                     </li>
                   ))}
@@ -127,7 +129,9 @@ function Header() {
       <nav className="homePage-navigation">
         <ul>
           <li>
-            <a href="/profile">Profile</a>
+            <a href={`/profile/${localStorage.getItem("email") || ""}`}>
+              Profile
+            </a>{" "}
           </li>
           <li>
             <a href="/events">Events</a>

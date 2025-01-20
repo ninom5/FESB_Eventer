@@ -27,19 +27,13 @@ app.post("/register", (req, res) => {
   const checkUsernameQuery = `SELECT * FROM korisnici_role WHERE username = $1`;
 
   client.query(checkEmailQuery, [req.body.email], (error, result) => {
-    if (error) {
-      return res.send("Error");
-    }
+    if (error) return res.send("Error");
 
-    if (result.rows.length > 0) {
-      return res.send("Email already exists");
-    }
+    if (result.rows.length > 0) return res.send("Email already exists");
 
-    if (req.body.password !== req.body.confirmPassword) {
+    if (req.body.password !== req.body.confirmPassword)
       return res.json("Passwords do not match");
-    }
 
-    // If email does not exist, check the username
     client.query(checkUsernameQuery, [req.body.username], (error, result) => {
       if (error) return res.send("Error");
 
@@ -48,7 +42,6 @@ app.post("/register", (req, res) => {
       if (req.body.username.toString().includes("@"))
         return res.send("username contains @");
 
-      // Both email and username are available, register the user
       const sql = `
         INSERT INTO korisnici_role (ime, prezime, username, email, sifra, tkorisnika)
         VALUES ($1, $2, $3, $4, $5, 'user')
@@ -76,7 +69,7 @@ app.post("/register", (req, res) => {
 });
 
 app.post("/login", (req, res) => {
-  const { input, password } = req.body;
+  const { input } = req.body;
 
   const isEmail = input.includes("@");
   const checkUserQuery = `SELECT * FROM korisnici_role WHERE ${
@@ -95,7 +88,6 @@ app.post("/login", (req, res) => {
 
       if (!isMatch) return res.json("Invalid username or password");
 
-      // Generate JWT token
       const Accesstoken = jwt.sign(
         {
           username: user.username,
@@ -246,7 +238,6 @@ app.put("/userUpdate", (req, res) => {
     prezime,
     username,
     telefon,
-    status_id,
     mjesto_name,
     ulica,
     picture_url,
@@ -288,17 +279,16 @@ app.put("/userUpdate", (req, res) => {
   function updateUser() {
     const updateQuery = `
       UPDATE KORISNICI_ROLE
-      SET ime = $1, prezime = $2, username = $3, telefon = $4, status_id = $5,
-          mjesto_id = $6, ulica = $7, picture_url = $8, 
+      SET ime = $1, prezime = $2, username = $3, telefon = $4,
+          mjesto_id = $5, ulica = $6, picture_url = $7, 
           modified_by = CURRENT_USER, date_modified = CURRENT_TIMESTAMP
-      WHERE email = $9
+      WHERE email = $8
     `;
     const values = [
       ime,
       prezime,
       username,
       newTelefon || null,
-      status_id,
       cityId || null,
       ulica,
       picture_url,
@@ -335,11 +325,13 @@ app.post("/search", async (req, res) => {
     req.body.searchValue.trim() !== "" ? `%${req.body.searchValue}%` : "%";
 
   const sqlUsers = `
-    SELECT TRIM(KR.IME) || ' ' || TRIM(KR.PREZIME) as NAZIV, 
-           CASE 
-             WHEN KR.TKORISNIKA = 'Kreator' THEN M.NAZIV || ', ' || KR.ULICA 
-             ELSE NULL 
-           END AS ADRESA
+    SELECT 
+      TRIM(KR.IME) || ' ' || TRIM(KR.PREZIME) AS NAZIV, 
+      CASE 
+        WHEN KR.TKORISNIKA = 'user' THEN M.NAZIV || ', ' || KR.ULICA 
+        ELSE NULL 
+      END AS ADRESA,
+      KR.EMAIL
     FROM KORISNICI_ROLE KR
     LEFT JOIN MJESTA M ON M.MJESTO_ID = KR.MJESTO_ID
     WHERE (TRIM(KR.IME) || ' ' || TRIM(KR.PREZIME)) ILIKE $1
@@ -436,8 +428,13 @@ LIMIT 3
   });
 });
 
-app.get("/events", (req, res) => {
+app.get("/events", async (req, res) => {
   const korisnik_id = req.query.korisnik_id;
+
+  if (!korisnik_id || isNaN(korisnik_id)) {
+    return res.send("Invalid or missing user id");
+  }
+
   const sql = `
     SELECT 
       D.DOGADAJ_ID,
@@ -458,14 +455,25 @@ app.get("/events", (req, res) => {
     WHERE 
       D.KORISNIK_ID = $1
   `;
-  client.query(sql, [korisnik_id], (error, result) => {
-    if (error) {
-      console.error("Error fetching data: ", error);
-      return res.status(500).send("Error fetching data");
-    }
-
+  try {
+    const result = await client.query(sql, [korisnik_id]);
     res.json(result.rows);
-  });
+  } catch (error) {
+    console.error("error fetching events: " + error);
+  }
+});
+
+app.get("/userConfirmedEvents", async (req, res) => {
+  const korisnik_id = req.query.korisnik_id;
+  const sql =
+    "SELECT dogadaj_id FROM VEZE_KORISNICI_DOGADAJI WHERE korisnik_id = $1";
+
+  try {
+    const result = await client.query(sql, [korisnik_id]);
+    res.json(result.rows);
+  } catch (error) {
+    console.error("error getting events user marked as coming: " + error);
+  }
 });
 
 app.post("/allEvents", async (req, res) => {
@@ -727,6 +735,25 @@ app.get("/getEventStatusId", async (req, res) => {
     return res.json(statusResult.rows[0].naziv);
   } catch (err) {
     console.error(err);
+  }
+});
+
+app.get("/getEventById", async (req, res) => {
+  const { dogadaj_id } = req.query;
+
+  const eventByIdSql = "SELECT * from dogadaji WHERE dogadaj_id = $1";
+
+  try {
+    const result = await client.query(eventByIdSql, [dogadaj_id]);
+
+    if (result.rowCount <= 0)
+      return res.json({
+        message: "Error getting event",
+      });
+
+    return res.json(result.rows[0]);
+  } catch (error) {
+    console.error("Error getting event by ID:", error);
   }
 });
 

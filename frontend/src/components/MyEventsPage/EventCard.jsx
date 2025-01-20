@@ -55,7 +55,7 @@ function statusColor(status) {
   }
 }
 
-function EventCard({ event }) {
+function EventCard({ event, showButtons }) {
   const { naziv, vrijeme, opis, ulica, latitude, longitude, date } = event;
 
   const [isEditing, setIsEditing] = useState(false);
@@ -260,6 +260,7 @@ function EventCard({ event }) {
           <p className="no-coords">No valid coordinates available.</p>
         )}
 
+        {showButtons &&(
         <div className="btn-div">
           {isEditing ? (
             <>
@@ -276,6 +277,7 @@ function EventCard({ event }) {
             </button>
           )}
         </div>
+        )}
       </div>
     </div>
   );
