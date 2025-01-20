@@ -112,6 +112,7 @@ function EventForm({
           <Autocomplete
             onLoad={handleAutocompleteLoad}
             options={{ componentRestrictions: { country: "HR" } }}
+            value={eventLocation}
             onPlaceChanged={handlePlaceChanged}
           >
             <input
