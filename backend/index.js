@@ -471,6 +471,19 @@ app.get("/events", async (req, res) => {
   }
 });
 
+app.get("/userConfirmedEvents", async (req, res) => {
+  const korisnik_id = req.query.korisnik_id;
+  const sql =
+    "SELECT dogadaj_id FROM VEZE_KORISNICI_DOGADAJI WHERE korisnik_id = $1";
+
+  try {
+    const result = await client.query(sql, [korisnik_id]);
+    res.json(result.rows);
+  } catch (error) {
+    console.error("error getting events user marked as coming: " + error);
+  }
+});
+
 app.post("/allEvents", async (req, res) => {
   const email = req.body.email;
 
@@ -731,6 +744,20 @@ app.get("/getEventStatusId", async (req, res) => {
   } catch (err) {
     console.error(err);
   }
+});
+
+app.get("/getEventById", async (req, res) => {
+  const eventId = req.query;
+  const eventByIdSql = "SELECT * from dogadaji WHERE dogadaj_id = $1";
+
+  const result = await client.query(eventByIdSql, [eventId]);
+
+  if (result.rowCount <= 0)
+    return res.json({
+      message: "Error getting event",
+    });
+
+  return res.json(statusResult.rows[0]);
 });
 
 app.listen(5000, () => {
