@@ -39,6 +39,14 @@
   flex-direction: column;
   padding: 1rem;
 }
+
+.event-card input,
+.event-card select,
+.event-card textarea {
+  background-color: transparent;
+  color: white;
+}
+
 .event-card:hover {
   box-shadow: 0 4px 10px rgba(255, 255, 255, 0.2);
 }
@@ -196,7 +204,6 @@ select {
   gap: 5rem;
   margin: 0 auto;
 }
-
 
 .myEventsPage {
   scrollbar-width: thin;

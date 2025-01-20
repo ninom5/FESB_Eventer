@@ -392,11 +392,11 @@ app.post("/mostActiveUsers", (req, res) => {
            KR.PICTURE_URL,
            KR.TKORISNIKA,
            CASE 
-             WHEN KR.TKORISNIKA = 'Kreator' THEN 
+             WHEN KR.TKORISNIKA = 'admin' THEN 
                (SELECT COUNT(DOG.DOGADAJ_ID) 
                 FROM DOGADAJI DOG
                 WHERE DOG.KORISNIK_ID = KR.KORISNIK_ID)
-             WHEN KR.TKORISNIKA = 'Korisnik' THEN 
+             WHEN KR.TKORISNIKA = 'user' THEN 
                (SELECT COUNT(VEKD.DOGADAJ_ID) 
                 FROM VEZE_KORISNICI_DOGADAJI VEKD
                 WHERE VEKD.KORISNIK_ID = KR.KORISNIK_ID)
@@ -586,7 +586,7 @@ app.post("/upComingEvents", async (req, res) => {
 		(S.Naziv = $2 OR S.Naziv = $3) AND
 		VRIJEME > CURRENT_TIMESTAMP
 	  ORDER BY VRIJEME ASC
-    LIMIT 15
+    LIMIT 10
   `;
     const resSelect = await client.query(sql, [korisnik_id, status1, status2]);
 
