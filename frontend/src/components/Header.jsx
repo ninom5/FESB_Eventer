@@ -116,7 +116,7 @@ function Header() {
                         setShowResults(false);
                       }}
                     >
-                      {user.naziv}
+                      {user.naziv} - {user.email}
                     </li>
                   ))}
                 </ul>
