@@ -1,7 +1,7 @@
 import noUserPicture from "../../assets/noPlayerIcon.svg";
 import { useNavigate } from "react-router-dom";
 
-function UserList({ mostActiveUsers, selectedUser, setSelectedUser }) {
+function UserList({ mostActiveUsers}) {
   const navigate = useNavigate();
 
   return (
@@ -52,7 +52,9 @@ function UserList({ mostActiveUsers, selectedUser, setSelectedUser }) {
                   className="addEventButton"
                   style={{ width: "100%", margin: "0" }}
                   onClick={() => {
-                    navigate(`/profile/${item.email}`);
+                    navigate(`/profile/${item.email}`, {
+                      state: { canEdit: false },
+                    });
                   }}
                 >
                   See more

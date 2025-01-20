@@ -216,18 +216,25 @@ app.post("/createEvent", async (req, res) => {
 });
 
 app.get("/checkUsername", async (req, res) => {
-  const { username } = req.query;
+  const { username, currentUserId } = req.query;
 
-  const checkUserNameSql = "SELECT * FROM korisnici_role WHERE username = $1";
+  const checkUserNameSql = `
+    SELECT * FROM korisnici_role 
+    WHERE username = $1 AND korisnik_id != $2
+  `;
   try {
-    const responseResult = await client.query(checkUserNameSql, [username]);
-    if (responseResult.rowCount > 0)
+    const responseResult = await client.query(checkUserNameSql, [
+      username,
+      currentUserId,
+    ]);
+    if (responseResult.rowCount > 0) {
       return res.json("Username already exists.");
+    }
 
     return res.json("Valid username");
   } catch (error) {
-    console.error(err);
-    res.json("error checking username");
+    console.error("Error checking username:", error);
+    res.json("Error checking username");
   }
 });
 

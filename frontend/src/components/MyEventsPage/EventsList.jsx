@@ -18,7 +18,7 @@ function EventsList({ events }) {
 
   return (
     <div className="created-events">
-      <h2>Created events</h2>
+      <h2>Your events</h2>
       <div className="events-list">
         {upcomingEvents.map((event) => (
           <EventCard key={event.dogadaj_id} event={event} showButtons={true}/>

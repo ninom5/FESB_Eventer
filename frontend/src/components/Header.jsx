@@ -109,7 +109,9 @@ function Header() {
                       key={user.id}
                       className="result-item"
                       onClick={() => {
-                        navigate(`/profile/${user.email}`);
+                        navigate(`/profile/${user.email}`, {
+                          state: { canEdit: false },
+                        });
                         setShowResults(false);
                       }}
                     >
@@ -129,7 +131,14 @@ function Header() {
       <nav className="homePage-navigation">
         <ul>
           <li>
-            <a href={`/profile/${localStorage.getItem("email") || ""}`}>
+            <a
+              className="header-profile-link"
+              onClick={() => {
+                navigate(`/profile/${localStorage.getItem("email")}`, {
+                  state: { canEdit: true },
+                });
+              }}
+            >
               Profile
             </a>{" "}
           </li>
