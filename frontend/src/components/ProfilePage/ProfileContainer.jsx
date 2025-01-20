@@ -238,13 +238,13 @@ function ProfileContainer({
               </div>
             </div>
           </div>
-          <div className="events-container" id="my-events">
+          {/* <div className="events-container" id="my-events">
             <h3>Your events</h3>
             <ul></ul>
             {events.map((event) => (
               <li>{event.naziv}</li> //dodat komponentu za listu dogadaja
             ))}
-          </div>
+          </div> */}
         </div>
       </div>
     </LoadScript>

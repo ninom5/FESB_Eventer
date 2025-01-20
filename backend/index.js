@@ -246,7 +246,6 @@ app.put("/userUpdate", (req, res) => {
     prezime,
     username,
     telefon,
-    status_id,
     mjesto_name,
     ulica,
     picture_url,
@@ -288,17 +287,16 @@ app.put("/userUpdate", (req, res) => {
   function updateUser() {
     const updateQuery = `
       UPDATE KORISNICI_ROLE
-      SET ime = $1, prezime = $2, username = $3, telefon = $4, status_id = $5,
-          mjesto_id = $6, ulica = $7, picture_url = $8, 
+      SET ime = $1, prezime = $2, username = $3, telefon = $4,
+          mjesto_id = $5, ulica = $6, picture_url = $7, 
           modified_by = CURRENT_USER, date_modified = CURRENT_TIMESTAMP
-      WHERE email = $9
+      WHERE email = $8
     `;
     const values = [
       ime,
       prezime,
       username,
       newTelefon || null,
-      status_id,
       cityId || null,
       ulica,
       picture_url,
@@ -438,8 +436,13 @@ LIMIT 3
   });
 });
 
-app.get("/events", (req, res) => {
+app.get("/events", async (req, res) => {
   const korisnik_id = req.query.korisnik_id;
+
+  if (!korisnik_id || isNaN(korisnik_id)) {
+    return res.send("Invalid or missing user id");
+  }
+
   const sql = `
     SELECT 
       D.DOGADAJ_ID,
@@ -460,14 +463,12 @@ app.get("/events", (req, res) => {
     WHERE 
       D.KORISNIK_ID = $1
   `;
-  client.query(sql, [korisnik_id], (error, result) => {
-    if (error) {
-      console.error("Error fetching data: ", error);
-      return res.status(500).send("Error fetching data");
-    }
-
+  try {
+    const result = await client.query(sql, [korisnik_id]);
     res.json(result.rows);
-  });
+  } catch (error) {
+    console.error("error fetching events: " + error);
+  }
 });
 
 app.post("/allEvents", async (req, res) => {
