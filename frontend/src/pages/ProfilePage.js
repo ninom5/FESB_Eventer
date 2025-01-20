@@ -40,18 +40,20 @@ function ProfilePage() {
   }, [email]);
 
   useEffect(() => {
-    const userEvents = async () => {
-      try {
-        const response = await axios.get(
-          `http://localhost:5000/events?korisnik_id=${userData.korisnik_id}`
-        );
-        setEvents(response.data);
-      } catch (error) {
-        console.error("error fetching events: " + error);
-      }
-    };
+    if (userData && userData.korisnik_id) {
+      const userEvents = async () => {
+        try {
+          const response = await axios.get(
+            `http://localhost:5000/events?korisnik_id=${userData.korisnik_id}`
+          );
+          setEvents(response.data);
+        } catch (error) {
+          console.error("Error fetching events: " + error);
+        }
+      };
 
-    userEvents();
+      userEvents();
+    }
   }, [userData]);
 
   const handleEdit = () => setIsEditing(true);

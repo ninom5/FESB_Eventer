@@ -13,10 +13,8 @@ function LoginPage() {
   });
 
   const handleSubmit = (e) => {
-    // Prevent the default form submission
     e.preventDefault();
 
-    // Send a POST request to login endpoint
     axios
       .post("http://localhost:5000/login", loginValues)
       .then((response) => {
@@ -26,7 +24,7 @@ function LoginPage() {
           localStorage.setItem("email", response.data.email);
           localStorage.setItem("accessToken", response.data.accessToken);
           localStorage.setItem("role", response.data.role);
-          localStorage.setItem("userId", response.data.userId);
+          localStorage.setItem("userId", response.data.userId);//provjeri jel uopce koristis userId 
           navigate("/");
         } else if (response.data === "Invalid username or password") {
           alert("Invalid username or password");
