@@ -1,12 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import headerLogo from "../assets/headerLogo.jpg";
-import {
-  faSearch,
-  faPartyHorn,
-  faCircleUser,
-} from "@fortawesome/free-solid-svg-icons";
-import { Link } from "react-router-dom";
+import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 

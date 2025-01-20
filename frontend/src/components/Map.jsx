@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import "../styles/map.css";
 import { GoogleMap, Marker, InfoWindow } from "@react-google-maps/api";
-import Loader from "../components/Loader";
 
 function Map({
   style,

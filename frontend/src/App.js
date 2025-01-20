@@ -1,5 +1,4 @@
 import { LoadScript } from "@react-google-maps/api";
-import "./index.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
@@ -8,12 +7,16 @@ import ProtectedRoute from "../src/ProtectedRoute";
 import ProfilePage from "./pages/ProfilePage";
 import EventsPage from "./pages/EventsPage";
 import MyEventsPage from "./pages/MyEventsPage";
+import "./index.css";
 
 const libraries = ["places"];
 
 function App() {
   return (
-    <LoadScript googleMapsApiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY} libraries={libraries}>
+    <LoadScript
+      googleMapsApiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY}
+      libraries={libraries}
+    >
       <BrowserRouter>
         <Routes>
           <Route path="/login" element={<LoginPage />} />

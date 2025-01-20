@@ -18,11 +18,11 @@ const styles = {
     left: 0,
     width: "100%",
     height: "100%",
-    backgroundColor: "rgba(0, 0, 0, 0.5)", // Siva senka
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    zIndex: 1000, // Osigurava da je loader iznad svega
+    zIndex: 1000,
   },
 };
 
