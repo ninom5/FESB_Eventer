@@ -127,29 +127,78 @@ function EventCard({ event, showButtons }) {
   };
 
   const handleEditClick = () => {
+    if (!isEditing) {
+      setUpdatedEvent((prevEvent) => {
+        const localDate = prevEvent.datum
+          ? new Date(prevEvent.datum)
+          : new Date(dateString);
+
+        const adjustedDate = new Date(
+          localDate.getTime() - localDate.getTimezoneOffset() * 60000
+        );
+
+        return {
+          ...prevEvent,
+          datum: adjustedDate.toISOString().split("T")[0],
+          time: prevEvent.time || timeString,
+        };
+      });
+    }
     setIsEditing((prevState) => !prevState);
   };
 
   const handleSave = () => {
-    console.log("Updated Event State:", updatedEvent);
-
-    if (!updatedEvent.datum || !updatedEvent.time) {
-      console.log(`Date: ${updatedEvent.datum}, Time: ${updatedEvent.vrijeme}`);
+    const finalDatum = updatedEvent.datum || event.datum;
+    const finalTime = updatedEvent.time || event.time;
+  
+    if (!finalDatum || !finalTime) {
       alert("Date and time can't be empty.");
       return;
     }
-
+  
+    const formattedEvent = {
+      ...updatedEvent,
+      datum: finalDatum,
+      time: finalTime,
+    };
+  
+    setUpdatedEvent(formattedEvent);
     setIsEditing(false);
-    updateData();
+  
+    axios
+      .post("http://localhost:5000/updateEvent", formattedEvent)
+      .then((res) => {
+        alert(res.data.message);
+      })
+      .catch((err) => {
+        alert("Error saving event: " + err);
+      });
   };
+  
 
   return (
     <div className="event-card">
       <div
         className="event-header"
-        onClick={() => {
-          setIsEditing(true);
-        }}
+        // onClick={() => {
+        //   if (!isEditing) {
+        //     const localDate = updatedEvent.datum
+        //       ? new Date(updatedEvent.datum)
+        //       : new Date();
+
+        //     const adjustedDate = new Date(
+        //       localDate.getTime() - localDate.getTimezoneOffset() * 60000
+        //     );
+
+        //     setUpdatedEvent({
+        //       ...updatedEvent,
+        //       datum: adjustedDate.toISOString().split("T")[0], 
+        //       time: updatedEvent.time || timeString,
+        //     });
+        //   }
+
+        //   setIsEditing(true);
+        // }}
       >
         <h3>
           {isEditing ? (
@@ -171,9 +220,9 @@ function EventCard({ event, showButtons }) {
             onChange={handleInputChange}
           >
             <option value={-1}>Canceled</option>
-            <option value={0}>Finished</option>
+            {/* <option value={0}>Finished</option> */}
             <option value={1}>Soon</option>
-            <option value={2}>In progress</option> {/*ovo maknit?*/}
+            {/* <option value={2}>In progress</option>  */}
           </select>
         ) : (
           <h4 style={{ color: statusColor(status) }}>{status}</h4>

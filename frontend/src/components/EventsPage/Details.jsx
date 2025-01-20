@@ -36,23 +36,29 @@ export function Details({
             <div className="event-title">
               <p>{event?.naziv}</p>
 
-              <FontAwesomeIcon
-                icon={isHovered ? solidCircleCheck : regularCircleCheck}
-                size="2x"
-                title={
-                  event?.dolazi ? "Remove attendance" : "Confirm attendance"
-                }
-                color="white"
-                style={{
-                  alignSelf: "end",
-                  cursor: "pointer",
-                }}
-                onMouseEnter={() => setIsHovered((prev) => !prev)}
-                onMouseLeave={() => setIsHovered((prev) => !prev)}
-                onClick={() =>
-                  event?.dolazi ? handleRemoveAttend() : handleAttend()
-                }
-              />
+              {
+                (event.status === "Uskoro" || event.status === "U tijeku") ? (<FontAwesomeIcon
+                  icon={isHovered ? solidCircleCheck : regularCircleCheck}
+                  size="2x"
+                  title={
+                    event?.dolazi ? "Remove attendance" : "Confirm attendance"
+                  }
+                  color="white"
+                  style={{
+                    alignSelf: "end",
+                    cursor: "pointer",
+                  }}
+                  onMouseEnter={() => setIsHovered((prev) => !prev)}
+                  onMouseLeave={() => setIsHovered((prev) => !prev)}
+                  onClick={() =>
+                    event?.dolazi ? handleRemoveAttend() : handleAttend()
+                  }
+                />) : (<FontAwesomeIcon
+                  icon={solidCircleCheck}
+                  size="2x"/>
+                )
+              }
+              
             </div>
             <div className="event-desc">
               <div className="event-desc-details">

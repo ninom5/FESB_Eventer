@@ -645,17 +645,22 @@ app.post("/removeAttendee", async (req, res) => {
 app.post("/updateEvent", async (req, res) => {
   const { dogadaj_id, opis, ulica, datum, time, naziv, status_id } = req.body;
 
-  eventDateTime = new Date(`${datum}T${time}`);
-
-  const currentDate = new Date();
-
-  if (eventDateTime < currentDate) {
-    return res.json({ message: "Date cant be in past" });
+  if (!datum || !time) {
+    return res.status(400).json({ message: "Date and time are required." });
   }
 
-  let newStatus_id = status_id;
+  const eventDateTime = new Date(`${datum}T${time}`);
+  const currentDate = new Date();
 
-  if (!status_id) newStatus_id = parseInt("-1", 10);
+  if (isNaN(eventDateTime.getTime())) {
+    return res.status(400).json({ message: "Invalid date or time format." });
+  }
+
+  if (eventDateTime < currentDate) {
+    return res.json({ message: "Date can't be in past" });
+  }
+
+  const newStatus_id = status_id !== undefined ? parseInt(status_id, 10) : -1;
 
   const sql = `
       UPDATE dogadaji
@@ -671,6 +676,7 @@ app.post("/updateEvent", async (req, res) => {
       newStatus_id,
       dogadaj_id,
     ]);
+
     if (result.rowCount > 0) {
       return res.json({ message: "Event updated successfully" });
     } else {
@@ -678,6 +684,7 @@ app.post("/updateEvent", async (req, res) => {
     }
   } catch (err) {
     console.error(err);
+    return res.status(500).json({ message: "Internal server error." });
   }
 });
 
